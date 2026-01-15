@@ -4,14 +4,39 @@ models.sequelize.sync();
 
 async function comments_get_all(req, res, next){
     const allComments = models.Comment.findAll({
-        attributes: {
-          include: [models.User, models.Review],
-          exclude: ['updatedAt', 'createdAt'],
+            include: [
+            {
+                model: models.Review,
+                attributes: ['reviewTitle'],
+                include: [
+                    {
+                        model: models.Game,
+                        attributes: ['title']
+                    }
+                ]
+            },
+            {
+                model: models.User,
+                attributes: ['userName']
+            }]
         },
-      })
-    .then(result => {
-        res.status(200).json(result);
-    })
+      )
+    .then(docs => {
+        const response = {
+         count: docs.length,
+         comments: docs.map(doc => {
+             return {
+                 commentText: doc.commentText,
+                 reviewTitle: doc.Review ? doc.Review.reviewTitle : null,
+                 title: doc.Review && doc.Review.Game ? doc.Review.Game.title : null,
+                 userName: doc.User ? doc.User.userName : null,
+                 createdAt: doc.createdAt,
+                 updatedAt: doc.updatedAt,
+             }
+         })
+        };
+         res.status(200).json(response);
+     })
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -20,6 +45,7 @@ async function comments_get_all(req, res, next){
     });
 }
 
+
 async function comments_get_user(req, res, next){
     const userId = req.params.userId;
     const User = await models.Comment.findAll(
@@ -27,7 +53,18 @@ async function comments_get_user(req, res, next){
             where: {
                 userId: userId
             },
-            include: [models.User, models.Review],
+            include: [
+                {
+                    model: models.Review,
+                    attributes: ['reviewTitle'],
+                    include: [
+                        {
+                            model: models.Game,
+                            attributes: ['title']
+                        }
+                    ]
+                }
+                ]
         })
     .then(docs => {
        const response = {
@@ -35,7 +72,8 @@ async function comments_get_user(req, res, next){
         comments: docs.map(doc => {
             return {
                 commentText: doc.commentText,
-                reviewId: doc.reviewId,
+                reviewTitle: doc.Review ? doc.Review.reviewTitle : null,
+                title: doc.Review && doc.Review.Game ? doc.Review.Game.title : null,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
             }
@@ -53,12 +91,15 @@ async function comments_get_user(req, res, next){
 
 async function comments_get_review(req, res, next){
     const reviewId = req.params.reviewId;
-    const Review = await models.Review.findAll(
+    const Comment = await models.Comment.findAll(
         {
             where: {
                 reviewId: reviewId
             },
-            include: [models.User, models.Review],
+            include: [{
+                model: models.User,
+                attributes: ['userName']
+            }],
         })
     .then(docs => {
        const response = {
@@ -66,7 +107,7 @@ async function comments_get_review(req, res, next){
         comments: docs.map(doc => {
             return {
                 commentText: doc.commentText,
-                userId: doc.userId,
+                userName: doc.User ? doc.User.userName : null,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
             }
@@ -130,43 +171,58 @@ async function comments_add_comment(req, res, next){
 
 async function comments_get_single(req, res, next){
     const id = req.params.commentId;
-    const singleComment = models.Comment.findByPk(id, {
-        attributes: {
-          exclude: ['updatedAt', 'createdAt'],
-        },
-      })
-        .then(doc => {
-            console.log("From database", doc);
-            if (doc) {
-            res.status(200).json({
-                comment: doc,
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:3000/comments'
+    try {
+        const comment = await models.Comment.findByPk(id, {
+            include: [
+                {
+                    model: models.Review,
+                    attributes: ['reviewTitle'],
+                    include: [
+                        {
+                            model: models.Game,
+                            attributes: ['title']
+                        }
+                    ]
+                },
+                {
+                    model: models.User,
+                    attributes: ['userName']
                 }
-            });
-        } else {
-            res.status(404).json({message: 'No valid data for id'});
+            ]
+        });
+
+        if (!comment) {
+            return res.status(404).json({ message: 'Comment не найден' });
         }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
-    });
+
+        const response = {
+            commentText: comment.commentText,
+            reviewTitle: comment.Review ? comment.Review.reviewTitle : null,
+            title: comment.Review && comment.Review.Game ? comment.Review.Game.title : null,
+            userName: comment.User ? comment.User.userName : null,
+            createdAt: comment.createdAt,
+            updatedAt: comment.updatedAt,
+        };
+
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message });
+    }
 }
 
 async function comments_modify_comment(req, res, next){
     const id = req.params.commentId;
     const updatedComment = {
         commentText: req.body.commentText,
-        userId: req.body.userId,
-        reviewId: req.body.reviewId,
+        // userId: req.body.userId,
+        // reviewId: req.body.reviewId,
     };
     
     const schema = {
-        commentText: {type:"string", optional: false, max: '1000'},
-        userId: {type:"number", optional: false},
-        reviewId: {type:"number", optional: false},
+        commentText: {type:"string", optional: true, max: '1000'},
+        // userId: {type:"number", optional: true},
+        // reviewId: {type:"number", optional: true},
     }
         
     const v = new validator();

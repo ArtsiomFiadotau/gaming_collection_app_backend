@@ -102,6 +102,7 @@ async function users_delete(req, res, next) {
 
 async function users_modify_user(req, res, next){
     const id = req.params.userId;
+    const newPass = req.body.password;
     const updatedUser = {
         userName: req.body.userName,
         email: req.body.email,
@@ -112,14 +113,15 @@ async function users_modify_user(req, res, next){
         ratingAverage: req.body.ratingAverage,
 };
 
+
 const schema = {
-    userName: {type:"string", optional: false, max: '30'},
-    email: {type:"string", optional: false},
-    password: {type:"string", optional: false},
+    userName: {type:"string", optional: true, max: '30'},
+    email: {type:"string", optional: true},
+    password: {type:"string", optional: true},
     avatarUrl: {type:"string", optional: true, max: '30'},
-    gamesNumber: {type:"integer", optional: false},
-    gamesCompleted: {type:"integer", optional: false},
-    ratingAverage: {type:"integer", optional: false},
+    gamesNumber: {type:"number", optional: true},
+    gamesCompleted: {type:"number", optional: true},
+    ratingAverage: {type:"number", optional: true},
 }
 
     const v = new validator();
@@ -131,6 +133,8 @@ const schema = {
                 errors: validationResponse
             });
      }
+      
+     
 
     const updUser = models.User.update(updatedUser, {where: { userId: id }})
     .then(result => {

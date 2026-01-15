@@ -2,102 +2,133 @@ const validator = require('fastest-validator');
 const models = require('../../models');
 models.sequelize.sync();
 
-async function listitems_get_singlelist(req, res, next){
+// async function listitems_get_singlelist(req, res, next){
+//     const listId = req.params.listId;
+//     const SingleList = await models.ListItem.findAll(
+//         {
+//             where: {
+//                 listId: listId
+//             },
+//             include: [models.User, models.Game],
+//           exclude: ['updatedAt', 'createdAt'],
+//         }   
+//       )
+//     .then(docs => {
+//        const response = {
+//                listTitle: docs.Gamelist.listTitle,
+//             games: docs.map(doc => {
+//             return {
+//                 gameId: doc.gameId, 
+//             }
+//         })
+//        };
+//         res.status(200).json(response);
+//     })
+//     .catch(err => {
+//         console.log(err);
+//         res.status(500).json({
+//             error: err
+//         })
+//     });
+//   }
+
+async function listitems_get_singlelist(req, res, next) {
     const listId = req.params.listId;
-    const SingleList = await models.ListItem.findAll(
-        {
-            where: {
-                listId: listId
-            },
-            include: [models.User, models.Game],
-        }   
-      )
-    .then(docs => {
-       const response = {
-            games: docs.map(doc => {
-            return {
-                gameId: doc.gameId, 
-            }
-        })
-       };
-        res.status(200).json(response);
-    })
-    .catch(err => {
-        console.log(err);
-        res.status(500).json({
-            error: err
-        })
-    });
+  
+    try {
+      // Получаем все ListItems по listId, с включением связей
+      const listItems = await models.ListItem.findAll({
+        where: { listId },
+        include: [
+          {
+            model: models.Game,
+            attributes: ['title']
+          },
+          {
+            model: models.GameList,
+            attributes: ['listTitle', 'userId'],
+            include: [
+              {
+                model: models.User,
+                attributes: ['userName']
+              }
+            ]
+          }
+        ]
+      });
+  
+      if (!listItems || listItems.length === 0) {
+        return res.status(404).json({ message: 'No items found for this list.' });
+      }
+  
+      // Получаем название списка и имя пользователя из первой записи
+      const firstItem = listItems[0];
+      const listTitle = firstItem.GameList.listTitle;
+      const userName = firstItem.GameList.User.userName;
+  
+      // Формируем список игр с их названиями
+      const games = listItems.map(item => ({
+        gameId: item.gameId,
+        title: item.Game.title
+      }));
+  
+      const response = {
+        listTitle,
+        userName,
+        games
+      };
+  
+      res.status(200).json(response);
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
   }
 
-//   async function listitems_get_singlelist(req, res, next) {
-//     const listId = req.params.listId;
-
-//     try {
-//         // Шаг 1: Получение данных о списке по listId
-//         const list = await models.List.findOne({
-//             where: { listId: listId },
-//             attributes: ['listTitle']
-//         });
-
-//         if (!list) {
-//             return res.status(404).json({ message: 'List not found' });
-//         }
-
-//         // Шаг 2: Получение всех элементов списка и связанных игр
-//         const listItems = await models.ListItem.findAll({
-//             where: { listId: listId },
-//             include: [{
-//                 model: models.Game,
-//                 attributes: ['title']
-//             }]
-//         });
-
-//         // Шаг 3: Формируем ответ
-//         const response = {
-//             listTitle: list.listTitle,
-//             games: listItems.map(item => {
-//                 return {
-//                     gameId: item.gameId,
-//                     title: item.Game ? item.Game.title : null
-//                 };
-//             })
-//         };
-
-//         res.status(200).json(response);
-//     } catch (err) {
-//         console.log(err);
-//         res.status(500).json({ error: err });
-//     }
-// }
-
 async function listitems_add_listitem(req, res, next) {
-    const listitem = {
-      listId: req.body.listId,
-      gameId: req.body.gameId
-    }
+    const listItem = {
+        gameId: req.body.gameId,
+        listId: req.body.listId,
+        };
 
-    const schema = {
-      listId: {type:"number", optional: false},
-      gameId: {type:"number", optional: false}}
-      
-  const v = new validator();
-  const validationResponse = v.validate(listitem, schema);
-      
-      if(validationResponse !== true){
-          return res.status(400).json({
-              message: "Validation failed",
-              errors: validationResponse
-          });
-      }
+        const schema = {
+            gameId: {type:"number", optional: false},
+            listId: {type:"number", optional: false},
+        }
+            
+        const v = new validator();
+        const validationResponse = v.validate(listItem, schema);
+            
+            if(validationResponse !== true){
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validationResponse
+                });
+            }
 
-    try {
-        const listItem = await models.ListItem.create(listitem);
-        return res.status(201).json(listItem);
-      } catch (error) {
-        return res.status(500).json({ message: 'Error adding listitem', error });
-      }
-    };
+        if (listItem.gameId && listItem.listId) {
+    const newListItem = await models.ListItem.create(listItem).then(result => {
+        console.log(result);
+        res.status(201).json({
+            message: 'New ListItem added succesfully!',
+            createdlistItem: {
+                gameId: result.gameId,
+                listId: result.listId,
+                request: {
+                    type: 'POST',
+                    url: 'http://localhost:3000/gameplatforms/' + result.gameId + '/' + result.listId
+                }
+            }
+    });
+})
+    .catch(err => {
+        console.log(err)
+        res.status(500).json({
+            error: err
+        });
+    });
+}
+}
 
     async function listitems_delete_listitem(req, res, next){
       const delListItem = {
@@ -139,7 +170,7 @@ async function listitems_add_listitem(req, res, next) {
 
 module.exports = {
     listitems_get_singlelist,
-   // subjectteachers_get_singlesubject,
+    //listitems_get_singlegame,
     listitems_add_listitem,
     listitems_delete_listitem
    }

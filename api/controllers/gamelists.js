@@ -4,13 +4,27 @@ models.sequelize.sync();
 
 async function gamelists_get_all(req, res, next){
     const allGameLists = models.GameList.findAll({
-        attributes: {
-          include: [models.User],
+            include: [
+            {
+                model: models.User,
+                attributes: ['userName']
+            }]
         },
-      })
-    .then(result => {
-        res.status(200).json(result);
-    })
+      )
+    .then(docs => {
+        const response = {
+         count: docs.length,
+         gamelists: docs.map(doc => {
+             return {
+                listTitle: doc.listTitle,
+                userName: doc.User ? doc.User.userName : null,
+                createdAt: doc.createdAt,
+                updatedAt: doc.updatedAt,
+             }
+         })
+        };
+         res.status(200).json(response);
+     })
     .catch(err => {
         console.log(err);
         res.status(500).json({
@@ -94,29 +108,31 @@ async function gamelists_add_gamelist(req, res, next){
 
 async function gamelists_get_single(req, res, next){
     const id = req.params.listId;
-    const singleGameList = models.GameList.findByPk(id, {
-        attributes: {
-          exclude: ['updatedAt', 'createdAt'],
-        },
-      })
-        .then(doc => {
-            console.log("From database", doc);
-            if (doc) {
-            res.status(200).json({
-                gameList: doc,
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:3000/gamelists'
+    try {
+        const gamelist = await models.GameList.findByPk(id, {
+            include: [
+                {   model: models.User,
+                    attributes: ['userName']
                 }
-            });
-        } else {
-            res.status(404).json({message: 'No valid data for id'});
+            ]
+        });
+
+        if (!gamelist) {
+            return res.status(404).json({ message: 'Gamelist не найден' });
         }
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({error: err});
-    });
+
+        const response = {
+            listTitle: gamelist.listTitle,
+            userName: gamelist.User ? gamelist.User.userName : null,
+            createdAt: gamelist.createdAt,
+            updatedAt: gamelist.updatedAt,
+        };
+
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message });
+    }
 }
 
 async function gamelists_modify_gamelist(req, res, next){
@@ -127,8 +143,8 @@ async function gamelists_modify_gamelist(req, res, next){
     };
     
     const schema = {
-        listTitle: {type:"string", optional: false, max: '200'},
-        userId: {type:"number", optional: false},
+        listTitle: {type:"string", optional: true, max: '200'},
+        userId: {type:"number", optional: true},
     }
         
     const v = new validator();

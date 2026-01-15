@@ -5,6 +5,7 @@ module.exports = {
     await queryInterface.createTable('GameLists', {
       listId: {
         allowNull: false,
+        autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
@@ -17,6 +18,10 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE',
+      },
+      listTitle: {
+        allowNull: true,
+        type: Sequelize.STRING(200)
       },
       createdAt: {
         allowNull: false,

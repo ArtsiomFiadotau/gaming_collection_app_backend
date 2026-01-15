@@ -1,0 +1,35 @@
+{
+  "name": "myrest",
+  "version": "1.0.0",
+  "description": "REST service for GameCollectionApp",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ArtsiomFiadotau/MyREST_VGTU.git"
+  },
+  "author": "Happyface",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ArtsiomFiadotau/MyREST_VGTU/issues"
+  },
+  "homepage": "https://github.com/ArtsiomFiadotau/MyREST_VGTU#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "body-parser": "^1.20.2",
+    "express": "^4.19.2",
+    "fastest-validator": "^1.19.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.11.0",
+    "sequelize": "^6.37.3",
+    "sequelize-cli": "^6.6.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.2"
+  }
+}

@@ -19,6 +19,7 @@ async function users_signup(req, res, next){
                     });
                 } else {
                     const user = {
+                        userName: req.body.userName,
                         email: req.body.email,
                         password: hash
                     };

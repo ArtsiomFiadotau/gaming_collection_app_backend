@@ -12,6 +12,6 @@ router.post('/', checkAuth, CollectionItemController.collectionitems_add_collect
 
 router.patch('/:userId/:gameId/:platformId', checkAuth, CollectionItemController.collectionitems_modify_collectionitem);
 
-router.delete('/:userId/:gameId/:platformId', checkAuth, CollectionItemController.collectionitems_delete_collectionitem);
+router.delete('/', checkAuth, CollectionItemController.collectionitems_delete_collectionitem);
 
 module.exports = router;

@@ -2,36 +2,6 @@ const validator = require('fastest-validator');
 const models = require('../../models');
 models.sequelize.sync();
 
-// async function listitems_get_singlelist(req, res, next){
-//     const listId = req.params.listId;
-//     const SingleList = await models.ListItem.findAll(
-//         {
-//             where: {
-//                 listId: listId
-//             },
-//             include: [models.User, models.Game],
-//           exclude: ['updatedAt', 'createdAt'],
-//         }   
-//       )
-//     .then(docs => {
-//        const response = {
-//                listTitle: docs.Gamelist.listTitle,
-//             games: docs.map(doc => {
-//             return {
-//                 gameId: doc.gameId, 
-//             }
-//         })
-//        };
-//         res.status(200).json(response);
-//     })
-//     .catch(err => {
-//         console.log(err);
-//         res.status(500).json({
-//             error: err
-//         })
-//     });
-//   }
-
 async function listitems_get_singlelist(req, res, next) {
     const listId = req.params.listId;
   
@@ -170,7 +140,6 @@ async function listitems_add_listitem(req, res, next) {
 
 module.exports = {
     listitems_get_singlelist,
-    //listitems_get_singlegame,
     listitems_add_listitem,
     listitems_delete_listitem
    }

@@ -2,67 +2,111 @@ const validator = require('fastest-validator');
 const models = require('../../models');
 models.sequelize.sync();
 
-async function collectionitems_get_collectionitem(req, res, next) {
-  const id1 = req.params.userId;
-  const id2 = req.params.gameId;
+async function collectionitems_get_collectionitem(req, res, next){
+    const userId = req.params.userId;
+    const gameId = req.params.gameId;
+    const platformId = req.params.platformId;
+    
+    try {
+        const collectionItem = await models.CollectionItem.findOne({
+            where: {
+                userId,
+                gameId,
+                platformId
+            },
+            include: [
+                {
+                    model: models.GamePlatform,
+                    attributes: ['gameId', 'platformId'],
+                    include: [
+                        {
+                          model: models.Game,
+                          attributes: ['title']
+                        },
+                        {
+                            model: models.Platform,
+                            attributes: ['platformName']
+                          }
+                      ]
+                }
+            ]
+        });
 
-  const collectionItem = await models.CollectionItems.findOne(
-      {
-          where: {
-            userId: id1,
-            gameId: id2,
-          },
-          include:[models.Game, models.Platform]
-      })
-      .then(result => {
-          console.log("From database", result);
-          if (result) {
-          res.status(200).json(result);
-      } else {
-          res.status(404).json({message: 'No such CollectionItem!'});
+        if (!collectionItem) {
+            return res.status(404).json({ message: 'Collection Item не найден' });
+        }
+
+        const response = {
+            title: collectionItem.GamePlatform ? collectionItem.GamePlatform.Game.title : null,
+            platformName: collectionItem.GamePlatform ? collectionItem.GamePlatform.Platform.platformName : null,
+            rating: collectionItem.rating ? collectionItem.rating : "not specified",
+            status: collectionItem.status ? collectionItem.status : "not specified",
+            isOwned: collectionItem.isOwned ? collectionItem.isOwned : false,
+        };
+
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ error: err.message });
+    }
+}
+
+async function collectionitems_get_usercollection(req, res, next) {
+    const userId = req.params.userId;
+  
+    try {
+      // Получаем все CollectionItems по userId, с включением связей
+      const collectionItems = await models.CollectionItem.findAll({
+        where: {
+            userId
+        },
+        include: [
+            {
+                model: models.GamePlatform,
+                attributes: ['gameId', 'platformId'],
+                include: [
+                    {
+                      model: models.Game,
+                      attributes: ['title']
+                    },
+                    {
+                        model: models.Platform,
+                        attributes: ['platformName']
+                      }
+                  ]
+            },
+                {
+                  model: models.User,
+                  attributes: ['userName']
+                }
+        ]
+    });
+  
+        if (!collectionItems || collectionItems.length === 0) {
+        return res.status(404).json({ message: 'No collection items found for this user.' });
       }
-      })
-      .catch(err => {
-          console.log(err);
-          res.status(500).json({error: err});
-  });
-}
-
-async function collectionitems_get_usercollection(req, res, next){
-  const userId = req.params.userId;
-  const userCollection = await models.CollectionItem.findAll({
-    where: {
-      userId: userId
-    },
-    include: [{
-       model: models.Game,
-       attributes: ['title']
-    },
-    {
-      model: models.Platform,
-      attributes: ['platformName']
-   }],
-}  , 
-    )
-  .then(docs => {
-     const response = {
-          games: docs.map(doc => {
-          return {
-            gameId: doc.gameId,
-            title: doc.Game ? doc.Game.title : null,
-            platformName: doc.Platform ? doc.Platform.title : null,
-          }
-      })
-     };
+  
+      // Получаем имя пользователя из первой записи
+      const firstItem = collectionItems[0];
+      const userName = firstItem.User.userName;
+  
+      // Формируем список игр с их названиями
+      const games = collectionItems.map(item => ({
+        gameId: item.gameId,
+        title: item.GamePlatform.Game.title
+      }));
+  
+      const response = {
+        userName,
+        games
+      };
+  
       res.status(200).json(response);
-  })
-  .catch(err => {
-      console.log(err);
-      res.status(500).json({
-          error: err
-      })
-  });
-}
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ error: err.message });
+    }
+  }
 
 async function collectionitems_add_collectionitem(req, res, next){
   const collectionItem = {
@@ -138,12 +182,12 @@ async function collectionitems_modify_collectionitem(req, res, next) {
 };
 
 const schema = {
-    userId: {type:"number", optional: false},
-    gameId: {type:"number", optional: false},
-    platformId: {type:"string", optional: false},
+    userId: {type:"number", optional: true},
+    gameId: {type:"number", optional: true},
+    platformId: {type:"string", optional: true},
     rating: {type:"number", optional: true},
-    status: {type:"string", optional: false},
-    isOwned: {type:"boolean", optional: false},
+    status: {type:"string", optional: true},
+    isOwned: {type:"boolean", optional: true},
     dateStarted: {type:"date", optional: true},
     dateCompleted: {type:"date", optional: true},
 }
@@ -194,11 +238,6 @@ const schema = {
         userId: {type:"number", optional: false},
         gameId: {type:"number", optional: false},
         platformId: {type:"string", optional: false},
-        // rating: {type:"number", optional: true},
-        // status: {type:"string", optional: false},
-        // isOwned: {type:"boolean", optional: false},
-        // dateStarted: {type:"date", optional: true, convert: true},
-        // dateCompleted: {type:"date", optional: true, convert: true},
     }
         
     const v = new validator();
@@ -211,7 +250,10 @@ const schema = {
             });
         }
 
-      const destroyCollectionItem = models.CollectionItem.destroy({where:{userId: delCollectionItem.userId, gameId: delCollectionItem.gameId, platformId: delCollectionItem.platformId}})
+      const destroyCollectionItem = models.CollectionItem.destroy({where:
+        {userId: delCollectionItem.userId, 
+        gameId: delCollectionItem.gameId, 
+        platformId: delCollectionItem.platformId}})
       .then(result => {
           res.status(200).json({
               message: 'Collection Item deleted!',
@@ -236,4 +278,4 @@ module.exports = {
   collectionitems_add_collectionitem,
   collectionitems_modify_collectionitem,
   collectionitems_delete_collectionitem
-   }
+}

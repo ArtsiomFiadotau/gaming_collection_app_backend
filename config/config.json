@@ -1,11 +1,11 @@
 {
   "development": {
-    "use_env_variable": "DATABASE_URL",
-    "host": "DATABASE_HOST",
-    "database": "DATABASE_NAME",
-    "username": "DATABASE_USER",
-    "password": "DATABASE_PASSWORD",
-    "port": "DATABASE_PORT",
+    "use_env_variable": "mysql://root:RpfWxNFtDOhsBrDiipadPkCCYbqDMfGs@shuttle.proxy.rlwy.net:38068/gaming_collection_database",
+    "host": "mysql://root:RpfWxNFtDOhsBrDiipadPkCCYbqDMfGs@shuttle.proxy.rlwy.net:38068/gaming_collection_database",
+    "database": "gaming_collection_database",
+    "username": "root",
+    "password": "RpfWxNFtDOhsBrDiipadPkCCYbqDMfGs",
+    "port": "38068",
     "dialect": "mysql2"
   },
   "test": {

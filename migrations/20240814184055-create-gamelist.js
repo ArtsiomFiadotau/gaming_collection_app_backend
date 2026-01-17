@@ -32,7 +32,19 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
-  },
+ 
+  await queryInterface.addConstraint('GameLists', {
+    fields: ['userId'],
+    type: 'foreign key',
+    name: 'fk_gameLists_users',
+    references: {
+      table: 'Users',
+      field: 'userId'
+    },
+    onUpdate: 'CASCADE',
+    onDelete: 'CASCADE'
+  });
+},
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('GameLists');
   }

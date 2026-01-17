@@ -22,9 +22,16 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       autoIncrement: true,
       primaryKey: true,
+      field: 'listId'
     },
-    listTitle: DataTypes.STRING(200),
-    userId: DataTypes.INTEGER
+    listTitle: {
+      type: DataTypes.STRING(200),
+      field: 'listTitle'
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      field: 'userId'
+    }
     }, {
     sequelize,
     modelName: 'GameList',

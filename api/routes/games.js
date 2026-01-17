@@ -1,17 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const checkAuth = require('../middleware/check-auth');
+import { Router } from 'express';
+const router = Router();
+import checkAuth from '../middleware/check-auth';
 
-const GameController = require('../controllers/games');
+import { games_get_all, games_add_game, games_get_single, games_modify_game, games_delete_game } from '../controllers/games';
 
-router.get('/', GameController.games_get_all);
+router.get('/', games_get_all);
 
-router.post('/', checkAuth, GameController.games_add_game);
+router.post('/', checkAuth, games_add_game);
 
-router.get('/:gameId', GameController.games_get_single);
+router.get('/:gameId', games_get_single);
 
-router.patch('/:gameId', checkAuth, GameController.games_modify_game);
+router.patch('/:gameId', checkAuth, games_modify_game);
 
-router.delete('/:gameId', checkAuth, GameController.games_delete_game);
+router.delete('/:gameId', checkAuth, games_delete_game);
 
-module.exports = router;
+export default router;

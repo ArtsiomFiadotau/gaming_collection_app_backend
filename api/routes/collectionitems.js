@@ -1,17 +1,17 @@
-const express = require('express');
-const router = express.Router();
-const checkAuth = require('../middleware/check-auth');
+import { Router } from 'express';
+const router = Router();
+import checkAuth from '../middleware/check-auth';
 
-const CollectionItemController = require('../controllers/collectionitems');
+import { collectionitems_get_collectionitem, collectionitems_get_usercollection, collectionitems_add_collectionitem, collectionitems_modify_collectionitem, collectionitems_delete_collectionitem } from '../controllers/collectionitems';
 
-router.get('/:userId/:gameId/:platformId', CollectionItemController.collectionitems_get_collectionitem);
+router.get('/:userId/:gameId/:platformId', collectionitems_get_collectionitem);
 
-router.get('/:userId', CollectionItemController.collectionitems_get_usercollection);
+router.get('/:userId', collectionitems_get_usercollection);
 
-router.post('/', checkAuth, CollectionItemController.collectionitems_add_collectionitem);
+router.post('/', checkAuth, collectionitems_add_collectionitem);
 
-router.patch('/:userId/:gameId/:platformId', checkAuth, CollectionItemController.collectionitems_modify_collectionitem);
+router.patch('/:userId/:gameId/:platformId', checkAuth, collectionitems_modify_collectionitem);
 
-router.delete('/', checkAuth, CollectionItemController.collectionitems_delete_collectionitem);
+router.delete('/', checkAuth, collectionitems_delete_collectionitem);
 
-module.exports = router;
+export default router;

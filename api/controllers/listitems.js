@@ -1,25 +1,25 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, ListItem, Game, GameList, User } from '../../models';
+sequelize.sync();
 
 async function listitems_get_singlelist(req, res, next) {
     const listId = req.params.listId;
   
     try {
       // Получаем все ListItems по listId, с включением связей
-      const listItems = await models.ListItem.findAll({
+      const listItems = await ListItem.findAll({
         where: { listId },
         include: [
           {
-            model: models.Game,
+            model: Game,
             attributes: ['title']
           },
           {
-            model: models.GameList,
+            model: GameList,
             attributes: ['listTitle', 'userId'],
             include: [
               {
-                model: models.User,
+                model: User,
                 attributes: ['userName']
               }
             ]
@@ -77,7 +77,7 @@ async function listitems_add_listitem(req, res, next) {
             }
 
         if (listItem.gameId && listItem.listId) {
-    const newListItem = await models.ListItem.create(listItem).then(result => {
+    const newListItem = await ListItem.create(listItem).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New ListItem added succesfully!',
@@ -119,7 +119,7 @@ async function listitems_add_listitem(req, res, next) {
               });
           }
 
-      const destroyListItem = models.ListItem.destroy({where:{listId: delListItem.listId, gameId: delListItem.gameId}})
+      const destroyListItem = ListItem.destroy({where:{listId: delListItem.listId, gameId: delListItem.gameId}})
       .then(result => {
           res.status(200).json({
               message: 'List Item deleted!',
@@ -138,7 +138,7 @@ async function listitems_add_listitem(req, res, next) {
       });
   }
 
-module.exports = {
+export default {
     listitems_get_singlelist,
     listitems_add_listitem,
     listitems_delete_listitem

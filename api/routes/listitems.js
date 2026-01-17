@@ -1,13 +1,13 @@
-const express = require('express');
-const router = express.Router();
-const checkAuth = require('../middleware/check-auth');
+import { Router } from 'express';
+const router = Router();
+import checkAuth from '../middleware/check-auth';
 
-const ListItemController = require('../controllers/listitems');
+import { listitems_get_singlelist, listitems_add_listitem, listitems_delete_listitem } from '../controllers/listitems';
 
-router.get('/:listId', ListItemController.listitems_get_singlelist);
+router.get('/:listId', listitems_get_singlelist);
 
-router.post('/', checkAuth, ListItemController.listitems_add_listitem);
+router.post('/', checkAuth, listitems_add_listitem);
 
-router.delete('/', checkAuth, ListItemController.listitems_delete_listitem);
+router.delete('/', checkAuth, listitems_delete_listitem);
 
-module.exports = router;
+export default router;

@@ -3,15 +3,15 @@ const cors = require('cors');
 const app = express();
 const bodyParser = require('body-parser');
 
-const collectionItemsRoutes = require('./api/routes/collectionitems');
-const commentsRoutes = require('./api/routes/comments');
-const gameListsRoutes = require('./api/routes/gamelists');
-const gamePlatformsRoutes = require('./api/routes/gameplatforms');
-const gamesRoutes = require('./api/routes/games');
-const listItemsRoutes = require('./api/routes/listitems');
-const reviewsRoutes = require('./api/routes/reviews');
-const platformsRoutes = require('./api/routes/platforms');
-const usersRoutes = require('./api/routes/users');
+const collectionItemsRoutes = require('./api/routes/collectionitems').default;
+const commentsRoutes = require('./api/routes/comments').default;
+const gameListsRoutes = require('./api/routes/gamelists').default;
+const gamePlatformsRoutes = require('./api/routes/gameplatforms').default;
+const gamesRoutes = require('./api/routes/games').default;
+const listItemsRoutes = require('./api/routes/listitems').default;
+const reviewsRoutes = require('./api/routes/reviews').default;
+const platformsRoutes = require('./api/routes/platforms').default;
+const usersRoutes = require('./api/routes/users').default;
 
 app.use(cors({
     origin: 'http://localhost:3000', // для разрешения запросов со всех фронтовых приложений; замените на конкретный origin для безопасности

@@ -1,15 +1,15 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, Review as _Review, Game, User as _User } from '../../models';
+sequelize.sync();
 
 async function reviews_get_all(req, res, next){
-    const allReviews = models.Review.findAll({
+    const allReviews = _Review.findAll({
             include: [{
-                model: models.Game,
+                model: Game,
                 attributes: ['title']
             },
             {
-                model: models.User,
+                model: _User,
                 attributes: ['userName']
             }],
           exclude: ['updatedAt', 'createdAt'],
@@ -41,13 +41,13 @@ async function reviews_get_all(req, res, next){
 
 async function reviews_get_user(req, res, next){
     const userId = req.params.userId;
-    const User = await models.Review.findAll(
+    const User = await _Review.findAll(
         {
             where: {
                 userId: userId
             },
             include: [{
-                model: models.Game,
+                model: Game,
                 attributes: ['title']
             }],
         })
@@ -76,13 +76,13 @@ async function reviews_get_user(req, res, next){
 
 async function reviews_get_game(req, res, next){
     const gameId = req.params.gameId;
-    const Review = await models.Review.findAll(
+    const Review = await _Review.findAll(
         {
             where: {
                 gameId: gameId
             },
             include: [{
-                                 model: models.User,
+                                 model: _User,
                                  attributes: ['userName']
                              }]
         })
@@ -134,7 +134,7 @@ async function reviews_add_review(req, res, next){
             });
         }
 
-    const newReview = models.Review.create(review).then(result => {
+    const newReview = _Review.create(review).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New review added succesfully!',
@@ -160,7 +160,7 @@ async function reviews_add_review(req, res, next){
 
 async function reviews_get_single(req, res, next){
     const id = req.params.reviewId;
-    const singleReview = models.Review.findByPk(id, {
+    const singleReview = _Review.findByPk(id, {
         attributes: {
           exclude: ['updatedAt', 'createdAt'],
         },
@@ -211,7 +211,7 @@ async function reviews_modify_review(req, res, next){
             });
         }
 
-    const updreview = models.Review.update(updatedReview, {where: { reviewId: id }})
+    const updreview = _Review.update(updatedReview, {where: { reviewId: id }})
     .then(result => {
         res.status(200).json({
             message: 'Review data updated!',
@@ -232,7 +232,7 @@ async function reviews_modify_review(req, res, next){
 
 async function reviews_delete_review(req, res, next){
     const id = req.params.reviewId;
-    const destroyReview = models.Review.destroy({where:{reviewId: id}})
+    const destroyReview = _Review.destroy({where:{reviewId: id}})
     .then(result => {
         res.status(200).json({
             message: 'Review deleted!',
@@ -251,7 +251,7 @@ async function reviews_delete_review(req, res, next){
     });
 }
 
-module.exports = {
+export default {
     reviews_get_all,
     reviews_get_user,
     reviews_get_game,

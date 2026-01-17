@@ -1,12 +1,12 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, GameList, User as _User } from '../../models';
+sequelize.sync();
 
 async function gamelists_get_all(req, res, next){
-    const allGameLists = models.GameList.findAll({
+    const allGameLists = GameList.findAll({
             include: [
             {
-                model: models.User,
+                model: _User,
                 attributes: ['userName']
             }]
         },
@@ -35,12 +35,12 @@ async function gamelists_get_all(req, res, next){
 
 async function gamelists_get_user(req, res, next){
     const userId = req.params.userId;
-    const User = await models.GameList.findAll(
+    const User = await GameList.findAll(
         {
             where: {
                 userId: userId
             },
-            include: [models.User],
+            include: [_User],
         })
     .then(docs => {
        const response = {
@@ -84,7 +84,7 @@ async function gamelists_add_gamelist(req, res, next){
             });
         }
 
-    const newGameList = models.GameList.create(gameList).then(result => {
+    const newGameList = GameList.create(gameList).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New GameList added succesfully!',
@@ -109,9 +109,9 @@ async function gamelists_add_gamelist(req, res, next){
 async function gamelists_get_single(req, res, next){
     const id = req.params.listId;
     try {
-        const gamelist = await models.GameList.findByPk(id, {
+        const gamelist = await GameList.findByPk(id, {
             include: [
-                {   model: models.User,
+                {   model: _User,
                     attributes: ['userName']
                 }
             ]
@@ -157,7 +157,7 @@ async function gamelists_modify_gamelist(req, res, next){
             });
         }
 
-    const updGameList = models.GameList.update(updatedGameList, {where: { listId: id }})
+    const updGameList = GameList.update(updatedGameList, {where: { listId: id }})
     .then(result => {
         res.status(200).json({
             message: 'GameList data updated!',
@@ -178,7 +178,7 @@ async function gamelists_modify_gamelist(req, res, next){
 
 async function gamelists_delete_gamelist(req, res, next){
     const id = req.params.listId;
-    const destroyGameList = models.GameList.destroy({where:{listId: id}})
+    const destroyGameList = GameList.destroy({where:{listId: id}})
     .then(result => {
         res.status(200).json({
             message: 'GameList deleted!',
@@ -197,7 +197,7 @@ async function gamelists_delete_gamelist(req, res, next){
     });
 }
 
-module.exports = {
+export default {
     gamelists_get_all,
     gamelists_get_user,
     gamelists_add_gamelist,

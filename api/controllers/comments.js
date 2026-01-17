@@ -1,22 +1,22 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, Comment as _Comment, Review, Game, User as _User } from '../../models';
+sequelize.sync();
 
 async function comments_get_all(req, res, next){
-    const allComments = models.Comment.findAll({
+    const allComments = _Comment.findAll({
             include: [
             {
-                model: models.Review,
+                model: Review,
                 attributes: ['reviewTitle'],
                 include: [
                     {
-                        model: models.Game,
+                        model: Game,
                         attributes: ['title']
                     }
                 ]
             },
             {
-                model: models.User,
+                model: _User,
                 attributes: ['userName']
             }]
         },
@@ -48,18 +48,18 @@ async function comments_get_all(req, res, next){
 
 async function comments_get_user(req, res, next){
     const userId = req.params.userId;
-    const User = await models.Comment.findAll(
+    const User = await _Comment.findAll(
         {
             where: {
                 userId: userId
             },
             include: [
                 {
-                    model: models.Review,
+                    model: Review,
                     attributes: ['reviewTitle'],
                     include: [
                         {
-                            model: models.Game,
+                            model: Game,
                             attributes: ['title']
                         }
                     ]
@@ -91,13 +91,13 @@ async function comments_get_user(req, res, next){
 
 async function comments_get_review(req, res, next){
     const reviewId = req.params.reviewId;
-    const Comment = await models.Comment.findAll(
+    const Comment = await _Comment.findAll(
         {
             where: {
                 reviewId: reviewId
             },
             include: [{
-                model: models.User,
+                model: _User,
                 attributes: ['userName']
             }],
         })
@@ -146,7 +146,7 @@ async function comments_add_comment(req, res, next){
             });
         }
 
-    const newComment = models.Comment.create(comment).then(result => {
+    const newComment = _Comment.create(comment).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New comment added succesfully!',
@@ -172,20 +172,20 @@ async function comments_add_comment(req, res, next){
 async function comments_get_single(req, res, next){
     const id = req.params.commentId;
     try {
-        const comment = await models.Comment.findByPk(id, {
+        const comment = await _Comment.findByPk(id, {
             include: [
                 {
-                    model: models.Review,
+                    model: Review,
                     attributes: ['reviewTitle'],
                     include: [
                         {
-                            model: models.Game,
+                            model: Game,
                             attributes: ['title']
                         }
                     ]
                 },
                 {
-                    model: models.User,
+                    model: _User,
                     attributes: ['userName']
                 }
             ]
@@ -235,7 +235,7 @@ async function comments_modify_comment(req, res, next){
             });
         }
 
-    const updComment = models.Comment.update(updatedComment, {where: { commentId: id }})
+    const updComment = _Comment.update(updatedComment, {where: { commentId: id }})
     .then(result => {
         res.status(200).json({
             message: 'comment data updated!',
@@ -256,7 +256,7 @@ async function comments_modify_comment(req, res, next){
 
 async function comments_delete_comment(req, res, next){
     const id = req.params.commentId;
-    const destroyComment = models.Comment.destroy({where:{commentId: id}})
+    const destroyComment = _Comment.destroy({where:{commentId: id}})
     .then(result => {
         res.status(200).json({
             message: 'Comment deleted!',
@@ -275,7 +275,7 @@ async function comments_delete_comment(req, res, next){
     });
 }
 
-module.exports = {
+export default {
     comments_get_all,
     comments_get_user,
     comments_get_review,

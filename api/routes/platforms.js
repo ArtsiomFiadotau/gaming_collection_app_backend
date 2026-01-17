@@ -1,18 +1,18 @@
-const express = require('express');
-const router = express.Router();
+import { Router } from 'express';
+const router = Router();
 
-const checkAuth = require('../middleware/check-auth');
+import checkAuth from '../middleware/check-auth';
 
-const PlatformController = require('../controllers/platforms');
+import { platforms_get_all, platforms_add_platform, platforms_get_single, platforms_modify_platform, platforms_delete_platform } from '../controllers/platforms';
 
-router.get('/', PlatformController.platforms_get_all);
+router.get('/', platforms_get_all);
 
-router.post('/', checkAuth, PlatformController.platforms_add_platform);
+router.post('/', checkAuth, platforms_add_platform);
 
-router.get('/:platformId', PlatformController.platforms_get_single);
+router.get('/:platformId', platforms_get_single);
 
-router.patch('/:platformId', checkAuth, PlatformController.platforms_modify_platform);
+router.patch('/:platformId', checkAuth, platforms_modify_platform);
 
-router.delete('/:platformId', checkAuth, PlatformController.platforms_delete_platform);
+router.delete('/:platformId', checkAuth, platforms_delete_platform);
 
-module.exports = router;
+export default router;

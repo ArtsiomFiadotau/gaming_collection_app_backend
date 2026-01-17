@@ -1,6 +1,6 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, CollectionItem, GamePlatform, Game, Platform, User } from '../../models';
+sequelize.sync();
 
 async function collectionitems_get_collectionitem(req, res, next){
     const userId = req.params.userId;
@@ -8,7 +8,7 @@ async function collectionitems_get_collectionitem(req, res, next){
     const platformId = req.params.platformId;
     
     try {
-        const collectionItem = await models.CollectionItem.findOne({
+        const collectionItem = await CollectionItem.findOne({
             where: {
                 userId,
                 gameId,
@@ -16,15 +16,15 @@ async function collectionitems_get_collectionitem(req, res, next){
             },
             include: [
                 {
-                    model: models.GamePlatform,
+                    model: GamePlatform,
                     attributes: ['gameId', 'platformId'],
                     include: [
                         {
-                          model: models.Game,
+                          model: Game,
                           attributes: ['title']
                         },
                         {
-                            model: models.Platform,
+                            model: Platform,
                             attributes: ['platformName']
                           }
                       ]
@@ -56,27 +56,27 @@ async function collectionitems_get_usercollection(req, res, next) {
   
     try {
       // Получаем все CollectionItems по userId, с включением связей
-      const collectionItems = await models.CollectionItem.findAll({
+      const collectionItems = await CollectionItem.findAll({
         where: {
             userId
         },
         include: [
             {
-                model: models.GamePlatform,
+                model: GamePlatform,
                 attributes: ['gameId', 'platformId'],
                 include: [
                     {
-                      model: models.Game,
+                      model: Game,
                       attributes: ['title']
                     },
                     {
-                        model: models.Platform,
+                        model: Platform,
                         attributes: ['platformName']
                       }
                   ]
             },
                 {
-                  model: models.User,
+                  model: User,
                   attributes: ['userName']
                 }
         ]
@@ -141,7 +141,7 @@ async function collectionitems_add_collectionitem(req, res, next){
           });
       }
 
-  const newCollectionItem = models.CollectionItem.create(collectionItem).then(result => {
+  const newCollectionItem = CollectionItem.create(collectionItem).then(result => {
       console.log(result);
       res.status(201).json({
           message: 'New collection item added succesfully!',
@@ -202,7 +202,7 @@ const schema = {
           });
       }
 
-  const updCollectionItem = await models.CollectionItem.update(updatedCollectionItem, 
+  const updCollectionItem = await CollectionItem.update(updatedCollectionItem, 
     {where: {
       userId: updatedCollectionItem.userId,
       gameId: updatedCollectionItem.gameId,
@@ -250,7 +250,7 @@ const schema = {
             });
         }
 
-      const destroyCollectionItem = models.CollectionItem.destroy({where:
+      const destroyCollectionItem = CollectionItem.destroy({where:
         {userId: delCollectionItem.userId, 
         gameId: delCollectionItem.gameId, 
         platformId: delCollectionItem.platformId}})
@@ -272,7 +272,7 @@ const schema = {
       });
   }
 
-module.exports = {
+export default {
   collectionitems_get_collectionitem,
   collectionitems_get_usercollection,
   collectionitems_add_collectionitem,

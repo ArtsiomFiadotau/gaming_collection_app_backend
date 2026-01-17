@@ -1,15 +1,15 @@
-const express = require("express");
-const router = express.Router();
-const checkAuth = require('../middleware/check-auth');
+import { Router } from "express";
+const router = Router();
+import checkAuth from '../middleware/check-auth';
 
-const UserController = require("../controllers/users");
+import { users_signup, users_login, users_modify_user, users_delete } from "../controllers/users";
 
-router.post("/signup", UserController.users_signup);
+router.post("/signup", users_signup);
 
-router.post('/login', UserController.users_login)
+router.post('/login', users_login)
 
-router.patch('/:userId', checkAuth, UserController.users_modify_user);
+router.patch('/:userId', checkAuth, users_modify_user);
 
-router.delete('/:userId', checkAuth, UserController.users_delete);
+router.delete('/:userId', checkAuth, users_delete);
 
-module.exports = router;
+export default router;

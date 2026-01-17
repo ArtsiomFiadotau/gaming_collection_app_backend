@@ -1,21 +1,21 @@
-const express = require('express');
-const router = express.Router();
-const checkAuth = require('../middleware/check-auth');
+import { Router } from 'express';
+const router = Router();
+import checkAuth from '../middleware/check-auth';
 
-const ReviewController = require('../controllers/reviews');
+import { reviews_get_all, reviews_get_game, reviews_get_user, reviews_add_review, reviews_get_single, reviews_modify_review, reviews_delete_review } from '../controllers/reviews';
 
-router.get('/', ReviewController.reviews_get_all);
+router.get('/', reviews_get_all);
 
-router.get('/game/:gameId', ReviewController.reviews_get_game);
+router.get('/game/:gameId', reviews_get_game);
 
-router.get('/user/:userId', ReviewController.reviews_get_user);
+router.get('/user/:userId', reviews_get_user);
 
-router.post('/', checkAuth, ReviewController.reviews_add_review);
+router.post('/', checkAuth, reviews_add_review);
 
-router.get('/:reviewId', ReviewController.reviews_get_single);
+router.get('/:reviewId', reviews_get_single);
 
-router.patch('/:reviewId', checkAuth, ReviewController.reviews_modify_review);
+router.patch('/:reviewId', checkAuth, reviews_modify_review);
 
-router.delete('/:reviewId', checkAuth, ReviewController.reviews_delete_review);
+router.delete('/:reviewId', checkAuth, reviews_delete_review);
 
-module.exports = router;
+export default router;

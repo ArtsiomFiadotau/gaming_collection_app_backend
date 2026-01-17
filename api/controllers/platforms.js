@@ -1,9 +1,9 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, Platform } from '../../models';
+sequelize.sync();
 
 async function platforms_get_all(req, res, next){
-    const allPlatforms = models.Platform.findAll({
+    const allPlatforms = Platform.findAll({
         attributes: {
           include: [],
           exclude: ['updatedAt', 'createdAt'],
@@ -51,7 +51,7 @@ async function platforms_add_platform(req, res, next){
             });
         }
 
-    const newPlatform = models.Platform.create(platform).then(result => {
+    const newPlatform = Platform.create(platform).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New platform added succesfully!',
@@ -74,7 +74,7 @@ async function platforms_add_platform(req, res, next){
 
 async function platforms_get_single(req, res, next){
     const id = req.params.platformId;
-    const singlePlatform = models.Platform.findByPk(id, {
+    const singlePlatform = Platform.findByPk(id, {
         attributes: {
           exclude: ['updatedAt', 'createdAt'],
         },
@@ -118,7 +118,7 @@ const schema = {
                 });
          }
 
-        const updPlatform = models.Platform.update(updatedPlatform, {where: { platformId: id }})
+        const updPlatform = Platform.update(updatedPlatform, {where: { platformId: id }})
         .then(result => {
             res.status(200).json({
                 message: 'Platform data updated!',
@@ -139,7 +139,7 @@ const schema = {
 
 async function platforms_delete_platform(req, res, next){
         const id = req.params.platformId;
-        const delPlatform = models.Platform.destroy({where:{platformId: id}})
+        const delPlatform = Platform.destroy({where:{platformId: id}})
         .then(result => {
             res.status(200).json({
                 message: 'Platform deleted!',
@@ -158,7 +158,7 @@ async function platforms_delete_platform(req, res, next){
         });
     }
 
-    module.exports = {
+    export default {
         platforms_get_all,
         platforms_add_platform,
         platforms_get_single,

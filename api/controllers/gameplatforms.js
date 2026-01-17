@@ -1,10 +1,10 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, GamePlatform } from '../../models';
+sequelize.sync();
 
 async function gameplatforms_get_singlegame(req, res, next){
     const gameId = req.params.gameId;
-    const SingleGame = await models.GamePlatform.findAll({where: {gameId: gameId}}, 
+    const SingleGame = await GamePlatform.findAll({where: {gameId: gameId}}, 
       )
     .then(docs => {
        const response = {
@@ -26,7 +26,7 @@ async function gameplatforms_get_singlegame(req, res, next){
 
   async function gameplatforms_get_singleplatform(req, res, next){
     const platformId = req.params.platformId;
-    const SinglePlatform = await models.GamePlatform.findAll({where: {platformId: platformId}}, 
+    const SinglePlatform = await GamePlatform.findAll({where: {platformId: platformId}}, 
       )
     .then(docs => {
        const response = {
@@ -68,7 +68,7 @@ async function gameplatforms_add_gameplatform(req, res, next) {
             }
 
         if (gamePlatform.gameId && gamePlatform.platformId) {
-    const newGamePlatform = await models.GamePlatform.create(gamePlatform).then(result => {
+    const newGamePlatform = await GamePlatform.create(gamePlatform).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New GamePlatform added succesfully!',
@@ -114,7 +114,7 @@ async function gameplatforms_modify_gameplatform(req, res, next) {
             });
         }
 
-    const updGamePlatform = await models.GamePlatform.update(updatedGamePlatform, {where: {gameId: id1, platformId: id2}})
+    const updGamePlatform = await GamePlatform.update(updatedGamePlatform, {where: {gameId: id1, platformId: id2}})
     .then(result => {
         res.status(200).json({
             message: 'GamePlatform data updated!',
@@ -136,7 +136,7 @@ async function gameplatforms_modify_gameplatform(req, res, next) {
 async function gameplatforms_delete_gameplatform(req, res, next) {
     const id1 = req.params.gameId;
     const id2 = req.params.platformId;
-    const destrGamePlatform = await models.GamePlatform.destroy({where: {gameId: id1, platformId: id2}})
+    const destrGamePlatform = await GamePlatform.destroy({where: {gameId: id1, platformId: id2}})
     .then(result => {
         res.status(200).json({
             message: 'GamePlatform deleted!',
@@ -155,7 +155,7 @@ async function gameplatforms_delete_gameplatform(req, res, next) {
     });
 }
 
-module.exports = {
+export default {
     gameplatforms_get_singleplatform,
     gameplatforms_get_singlegame,
     gameplatforms_add_gameplatform,

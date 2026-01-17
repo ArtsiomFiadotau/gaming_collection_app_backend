@@ -1,9 +1,9 @@
-const validator = require('fastest-validator');
-const models = require('../../models');
-models.sequelize.sync();
+import validator from 'fastest-validator';
+import { sequelize, Game } from '../../models';
+sequelize.sync();
 
 async function games_get_all(req, res, next){
-    const allGames = models.Game.findAll({
+    const allGames = Game.findAll({
         attributes: ['gameId', 'title'],
       })
     .then(docs => {
@@ -60,7 +60,7 @@ async function games_add_game(req, res, next){
             });
         }
 
-    const newGame = models.Game.create(game).then(result => {
+    const newGame = Game.create(game).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New game added succesfully!',
@@ -89,7 +89,7 @@ async function games_add_game(req, res, next){
 
 async function games_get_single(req, res, next){
     const id = req.params.gameId;
-    const singleGame = models.Game.findByPk(id, {
+    const singleGame = Game.findByPk(id, {
         attributes: {
           exclude: ['updatedAt', 'createdAt'],
         },
@@ -125,7 +125,7 @@ async function games_modify_game(req, res, next){
         coverImage: req.body.coverImage,
     };
     
-    const updGame = models.Game.update(updatedGame, {where: { gameId: id }})
+    const updGame = Game.update(updatedGame, {where: { gameId: id }})
     .then(result => {
         res.status(200).json({
             message: 'Game data updated!',
@@ -146,7 +146,7 @@ async function games_modify_game(req, res, next){
 
 async function games_delete_game(req, res, next){
     const id = req.params.gameId;
-    const destroyGame = models.Game.destroy({where:{gameId: id}})
+    const destroyGame = Game.destroy({where:{gameId: id}})
     .then(result => {
         res.status(200).json({
             message: 'Game deleted!',
@@ -165,7 +165,7 @@ async function games_delete_game(req, res, next){
     });
 }
 
-module.exports = {
+export default {
     games_get_all,
     games_add_game,
     games_get_single,

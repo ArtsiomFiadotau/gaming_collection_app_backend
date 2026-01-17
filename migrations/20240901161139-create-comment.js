@@ -21,7 +21,6 @@ module.exports = {
       },
       reviewId: {
         allowNull: false,
-        primaryKey: true,
         type: Sequelize.INTEGER,
         references: {
           model: 'Reviews', // Ссылка на таблицу Game

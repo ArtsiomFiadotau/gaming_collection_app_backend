@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ArtsiomFiadotau/MyREST_VGTU.git"
+    "url": "git+https://github.com/ArtsiomFiadotau/gaming_collection_app_backend.git"
   },
   "author": "Happyface",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/ArtsiomFiadotau/MyREST_VGTU/issues"
+    "url": "https://github.com/ArtsiomFiadotau/gaming_collection_app_backend/issues"
   },
-  "homepage": "https://github.com/ArtsiomFiadotau/MyREST_VGTU#readme",
+  "homepage": "https://github.com/ArtsiomFiadotau/gaming_collection_app_backend#readme",
   "dependencies": {
     "bcrypt": "^5.1.1",
     "body-parser": "^1.20.2",

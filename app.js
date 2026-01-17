@@ -1,17 +1,17 @@
-const express = require('express');
-const cors = require('cors');
+import express from 'express';
+import cors from 'cors';
 const app = express();
-const bodyParser = require('body-parser');
+import { urlencoded, json } from 'body-parser';
 
-const collectionItemsRoutes = require('./api/routes/collectionitems').default;
-const commentsRoutes = require('./api/routes/comments').default;
-const gameListsRoutes = require('./api/routes/gamelists').default;
-const gamePlatformsRoutes = require('./api/routes/gameplatforms').default;
-const gamesRoutes = require('./api/routes/games').default;
-const listItemsRoutes = require('./api/routes/listitems').default;
-const reviewsRoutes = require('./api/routes/reviews').default;
-const platformsRoutes = require('./api/routes/platforms').default;
-const usersRoutes = require('./api/routes/users').default;
+import collectionItemsRoutes from './api/routes/collectionitems';
+import commentsRoutes from './api/routes/comments';
+import gameListsRoutes from './api/routes/gamelists';
+import gamePlatformsRoutes from './api/routes/gameplatforms';
+import gamesRoutes from './api/routes/games';
+import listItemsRoutes from './api/routes/listitems';
+import reviewsRoutes from './api/routes/reviews';
+import platformsRoutes from './api/routes/platforms';
+import usersRoutes from './api/routes/users';
 
 app.use(cors({
     origin: 'http://localhost:3000', // для разрешения запросов со всех фронтовых приложений; замените на конкретный origin для безопасности
@@ -19,8 +19,8 @@ app.use(cors({
     allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
 }));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(bodyParser.json());
+app.use(urlencoded({extended: false}));
+app.use(json());
 
 // app.use((req, res, next) => {
 //     res.header("Access-Control-Allow-Origin", "*");
@@ -61,4 +61,4 @@ app.use((err, req, res, next) => {
     });
 });
 
-module.exports = app;
+export default app;

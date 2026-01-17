@@ -1,23 +1,21 @@
 {
   "development": {
-    "username": "root",
-    "password": null,
-    "database": "gaming_collection_database",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "use_env_variable": "DATABASE_URL",
+    "host": "DATABASE_HOST",
+    "database": "DATABASE_NAME",
+    "username": "DATABASE_USER",
+    "password": "DATABASE_PASSWORD",
+    "port": "DATABASE_PORT"
   },
   "test": {
-    "username": "root",
-    "password": null,
-    "database": "gaming_collection_database",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "use_env_variable": "DATABASE_URL"
   },
   "production": {
-    "username": "root",
-    "password": null,
-    "database": "gaming_collection_database",
-    "host": "127.0.0.1",
-    "dialect": "mysql"
+    "use_env_variable": "DATABASE_URL",
+    "host": "DATABASE_HOST",
+    "database": "DATABASE_NAME",
+    "username": "DATABASE_USER",
+    "password": "DATABASE_PASSWORD",
+    "port": "DATABASE_PORT"
   }
 }

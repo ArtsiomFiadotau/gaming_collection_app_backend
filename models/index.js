@@ -20,7 +20,7 @@ if (config.use_env_variable) {
   sequelize = new Sequelize(process.env[config.use_env_variable], {
     host: process.env['DATABASE_HOST'],
     port: process.env['DATABASE_PORT'],
-    dialect: 'mysql',
+    dialect: 'mysql2',
     database: process.env['DATABASE_NAME'],
     username: process.env['DATABASE_USER'],
     password: process.env['DATABASE_PASSWORD']

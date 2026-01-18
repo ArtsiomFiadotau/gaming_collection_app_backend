@@ -1,7 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import pkg from 'body-parser';
-const { urlencoded, json } = pkg;
+import helmet from 'helmet';
+import morgan from 'morgan';
+
 import collectionItemsRoutes from './api/routes/collectionitems.js';
 import commentsRoutes from './api/routes/comments.js';
 import gameListsRoutes from './api/routes/gamelists.js';
@@ -12,55 +13,61 @@ import reviewsRoutes from './api/routes/reviews.js';
 import platformsRoutes from './api/routes/platforms.js';
 import usersRoutes from './api/routes/users.js';
 
-
 const app = express();
 
-app.use(cors({
-    origin: 'http://localhost:3000', // для разрешения запросов со всех фронтовых приложений; замените на конкретный origin для безопасности
+// Security headers
+app.use(helmet());
+
+// Logging in non-production
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('dev'));
+}
+
+// CORS: origin from env or localhost:3000 by default
+const corsOrigin = process.env.CORS_ORIGIN || 'http://localhost:3000';
+app.use(
+  cors({
+    origin: corsOrigin,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
-}));
+    allowedHeaders: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization'],
+  })
+);
 
-app.use(urlencoded({extended: false}));
-app.use(json());
+// Body parsing
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
 
-// app.use((req, res, next) => {
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header(
-//         "Access-Control-Allow-Headers",
-//         "Origin, X-Requested-With, Content-Type, Accept, Authorization"
-//     );
-//     if (req.method === 'OPTIONS') {
-//         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
-//         return res.status(200).json({});
-//     }
-//     next();
-// });
+// Optionally prefix API routes with /api — remove '/api' if you don't want the prefix
+const apiPrefix = process.env.API_PREFIX || '';
 
-app.use('/collectionitems', collectionItemsRoutes);
-app.use('/comments', commentsRoutes);
-app.use('/gamelists', gameListsRoutes);
-app.use('/gameplatforms', gamePlatformsRoutes);
-app.use('/games', gamesRoutes);
-app.use('/listitems', listItemsRoutes);
-app.use('/reviews', reviewsRoutes);
-app.use('/platforms', platformsRoutes);
-app.use('/users', usersRoutes);
+app.use(`${apiPrefix}/collectionitems`, collectionItemsRoutes);
+app.use(`${apiPrefix}/comments`, commentsRoutes);
+app.use(`${apiPrefix}/gamelists`, gameListsRoutes);
+app.use(`${apiPrefix}/gameplatforms`, gamePlatformsRoutes);
+app.use(`${apiPrefix}/games`, gamesRoutes);
+app.use(`${apiPrefix}/listitems`, listItemsRoutes);
+app.use(`${apiPrefix}/reviews`, reviewsRoutes);
+app.use(`${apiPrefix}/platforms`, platformsRoutes);
+app.use(`${apiPrefix}/users`, usersRoutes);
 
+// Health check
+app.get('/health', (req, res) => res.status(200).json({ status: 'ok' }));
 
+// 404 handler
 app.use((req, res, next) => {
-    const err = new Error('Not found');
-    err.status = 404;
-    next(err);
+  res.status(404).json({ message: 'Not Found' });
 });
 
+// Error handler
 app.use((err, req, res, next) => {
-    res.status(err.status || 500);
-    res.json({
-        error: {
-            message: err.message
-        }
-    });
+  console.error(err);
+  const status = err.status || 500;
+  res.status(status).json({
+    error: {
+      message: err.message || 'Internal Server Error',
+    },
+  });
 });
 
 export default app;
+

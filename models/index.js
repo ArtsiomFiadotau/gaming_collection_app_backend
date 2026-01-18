@@ -70,7 +70,7 @@ export async function initializeDatabase() {
       const dropOrder = [  
         'CollectionItems',
         'ListItems', 
-        'GamePlatform',
+        'GamePlatforms',
         'GameLists',  
         'Comments',
         'Reviews',

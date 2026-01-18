@@ -3,13 +3,9 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
   class GameList extends Model {
     static associate(models) {
-      GameList.belongsTo(models.User,
-        {
-        foreignKey: 'userId'
-      }
-      );
+      GameList.belongsTo(models.User, { foreignKey: 'userId' });
       GameList.belongsToMany(models.Game, {
-        through: 'ListItem',
+        through: models.ListItem, // ссылка на модель, не строку
         foreignKey: 'listId',
         otherKey: 'gameId',
       });
@@ -30,10 +26,12 @@ export default (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       field: 'userId'
     }
-    }, {
+  }, {
     sequelize,
     modelName: 'GameList',
-  })
+    tableName: 'GameLists',
+    timestamps: true
+  });
 
   return GameList;
 };

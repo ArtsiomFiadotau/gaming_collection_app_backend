@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import checkAuth from '../middleware/check-auth';
+import checkAuth from '../middleware/check-auth.js';
 
-import { gamelists_get_all, gamelists_get_user, gamelists_add_gamelist, gamelists_get_single, gamelists_modify_gamelist, gamelists_delete_gamelist } from '../controllers/gamelists';
+import { gamelists_get_all, gamelists_get_user, gamelists_add_gamelist, gamelists_get_single, gamelists_modify_gamelist, gamelists_delete_gamelist } from '../controllers/gamelists.js';
 
 router.get('/', gamelists_get_all);
 

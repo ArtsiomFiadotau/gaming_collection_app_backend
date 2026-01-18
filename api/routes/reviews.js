@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import checkAuth from '../middleware/check-auth';
+import checkAuth from '../middleware/check-auth.js';
 
-import { reviews_get_all, reviews_get_game, reviews_get_user, reviews_add_review, reviews_get_single, reviews_modify_review, reviews_delete_review } from '../controllers/reviews';
+import { reviews_get_all, reviews_get_game, reviews_get_user, reviews_add_review, reviews_get_single, reviews_modify_review, reviews_delete_review } from '../controllers/reviews.js';
 
 router.get('/', reviews_get_all);
 

@@ -1,6 +1,8 @@
 import validator from 'fastest-validator';
-import { sequelize, CollectionItem, GamePlatform, Game, Platform, User } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { CollectionItem, GamePlatform, Game, Platform, User, sequelize } = getDB();
+
+//  import { sequelize, CollectionItem, GamePlatform, Game, Platform, User } from '../../models';
 
 async function collectionitems_get_collectionitem(req, res, next){
     const userId = req.params.userId;
@@ -142,7 +144,6 @@ async function collectionitems_add_collectionitem(req, res, next){
       }
 
   const newCollectionItem = CollectionItem.create(collectionItem).then(result => {
-      console.log(result);
       res.status(201).json({
           message: 'New collection item added succesfully!',
           createdCollectionItem: {

@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import checkAuth from '../middleware/check-auth';
+import checkAuth from '../middleware/check-auth.js';
 
-import { games_get_all, games_add_game, games_get_single, games_modify_game, games_delete_game } from '../controllers/games';
+import { games_get_all, games_add_game, games_get_single, games_modify_game, games_delete_game } from '../controllers/games.js';
 
 router.get('/', games_get_all);
 

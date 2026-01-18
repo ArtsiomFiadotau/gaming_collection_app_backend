@@ -1,6 +1,7 @@
 import validator from 'fastest-validator';
-import { sequelize, Platform } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { Platform, sequelize } = getDB();
+//import { sequelize, Platform } from '../../models';
 
 async function platforms_get_all(req, res, next){
     const allPlatforms = Platform.findAll({

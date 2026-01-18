@@ -1,12 +1,13 @@
 import validator from 'fastest-validator';
-import { sequelize, GameList, User as _User } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { GameList, User, sequelize } = getDB();
+//import { sequelize, GameList, User as _User } from '../../models';
 
 async function gamelists_get_all(req, res, next){
     const allGameLists = GameList.findAll({
             include: [
             {
-                model: _User,
+                model: User,
                 attributes: ['userName']
             }]
         },
@@ -40,7 +41,7 @@ async function gamelists_get_user(req, res, next){
             where: {
                 userId: userId
             },
-            include: [_User],
+            include: [User],
         })
     .then(docs => {
        const response = {
@@ -111,7 +112,7 @@ async function gamelists_get_single(req, res, next){
     try {
         const gamelist = await GameList.findByPk(id, {
             include: [
-                {   model: _User,
+                {   model: User,
                     attributes: ['userName']
                 }
             ]

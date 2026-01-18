@@ -1,17 +1,18 @@
 import express from 'express';
 import cors from 'cors';
-const app = express();
 import { urlencoded, json } from 'body-parser';
+import collectionItemsRoutes from './api/routes/collectionitems.js';
+import commentsRoutes from './api/routes/comments.js';
+import gameListsRoutes from './api/routes/gamelists.js';
+import gamePlatformsRoutes from './api/routes/gameplatforms.js';
+import gamesRoutes from './api/routes/games.js';
+import listItemsRoutes from './api/routes/listitems.js';
+import reviewsRoutes from './api/routes/reviews.js';
+import platformsRoutes from './api/routes/platforms.js';
+import usersRoutes from './api/routes/users.js';
 
-import collectionItemsRoutes from './api/routes/collectionitems';
-import commentsRoutes from './api/routes/comments';
-import gameListsRoutes from './api/routes/gamelists';
-import gamePlatformsRoutes from './api/routes/gameplatforms';
-import gamesRoutes from './api/routes/games';
-import listItemsRoutes from './api/routes/listitems';
-import reviewsRoutes from './api/routes/reviews';
-import platformsRoutes from './api/routes/platforms';
-import usersRoutes from './api/routes/users';
+
+const app = express();
 
 app.use(cors({
     origin: 'http://localhost:3000', // для разрешения запросов со всех фронтовых приложений; замените на конкретный origin для безопасности

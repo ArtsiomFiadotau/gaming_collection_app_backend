@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import checkAuth from '../middleware/check-auth';
+import checkAuth from '../middleware/check-auth.js';
 
-import { collectionitems_get_collectionitem, collectionitems_get_usercollection, collectionitems_add_collectionitem, collectionitems_modify_collectionitem, collectionitems_delete_collectionitem } from '../controllers/collectionitems';
+import { collectionitems_get_collectionitem, collectionitems_get_usercollection, collectionitems_add_collectionitem, collectionitems_modify_collectionitem, collectionitems_delete_collectionitem } from '../controllers/collectionitems.js';
 
 router.get('/:userId/:gameId/:platformId', collectionitems_get_collectionitem);
 

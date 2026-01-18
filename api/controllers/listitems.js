@@ -1,6 +1,7 @@
 import validator from 'fastest-validator';
-import { sequelize, ListItem, Game, GameList, User } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { ListItem, Game, GameList, User, sequelize } = getDB();
+//import { sequelize, ListItem, Game, GameList, User } from '../../models';
 
 async function listitems_get_singlelist(req, res, next) {
     const listId = req.params.listId;

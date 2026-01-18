@@ -1,47 +1,42 @@
-import validator from 'fastest-validator';
-import { hash as _hash, compare } from "bcrypt";
+import Validator from 'fastest-validator';
+import { hash as _hash, compare as _compare } from "bcrypt";
 import { sign } from 'jsonwebtoken';
+import { getDB } from '../../models/index.js';
+const {  User, sequelize } = getDB();
+import { promisify } from 'util';
+//import { User } from '../../models';
 
-import { User } from '../../models';
+const hash = promisify(_hash);  
+const compare = promisify(_compare);
 
-async function users_signup(req, res, next){
-    const userSignUp = User.findOne({where:{email: req.body.email}})
-    .then(user => {
-        if (user) {
-            return res.status(409).json({
-                message: 'Email existo'
-            });
-        } else {
-            _hash(req.body.password, 10, (err, hash) => {
-                if (err) {
-                    return res.status(500).json({
-                        error: err
-                    });
-                } else {
-                    const user = {
-                        userName: req.body.userName,
-                        email: req.body.email,
-                        password: hash
-                    };
-                    const createdUser = User
-                    .create(user)
-                    .then(result => {
-                        console.log(result);
-                        res.status(201).json({
-                            message: 'User created'
-                        });
-                    })
-                    .catch(err => {
-                        console.log(err);
-                        res.status(500).json({
-                            error: err
-                        });
-                    });
-                }
-            }); 
-        }
-    })
-}
+async function users_signup(req, res, next) {  
+      try {  
+        const { User } = getDB();  
+        const existing = await User.findOne({ where: { email: req.body.email } });  
+        if (existing) {  
+          return res.status(409).json({ message: 'Email exists' });  
+        }  
+      
+        const passwordHash = await hash(req.body.password, 10);  
+        const newUser = {  
+          userName: req.body.userName,  
+          email: req.body.email,  
+          password: passwordHash,  
+        };  
+      
+        const created = await User.create(newUser);  
+        // не возвращаем password  
+        const responseUser = {  
+          userId: created.userId,  
+          userName: created.userName,  
+          email: created.email,  
+        };  
+        return res.status(201).json({ message: 'User created', user: responseUser });  
+      } catch (err) {  
++    console.error(err);  
+        return res.status(500).json({ error: err });  
+      }
+    }  
 
 async function users_login(req, res, next){
     const userLogin = User.findOne({where:{email: req.body.email}})

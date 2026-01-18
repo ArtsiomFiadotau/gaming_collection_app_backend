@@ -1,8 +1,8 @@
 import { Router } from 'express';
 const router = Router();
-import checkAuth from '../middleware/check-auth';
+import checkAuth from '../middleware/check-auth.js';
 
-import { gameplatforms_get_singleplatform, gameplatforms_get_singlegame, gameplatforms_add_gameplatform, gameplatforms_modify_gameplatform, gameplatforms_delete_gameplatform } from '../controllers/gameplatforms';
+import { gameplatforms_get_singleplatform, gameplatforms_get_singlegame, gameplatforms_add_gameplatform, gameplatforms_modify_gameplatform, gameplatforms_delete_gameplatform } from '../controllers/gameplatforms.js';
 
 router.get('/platform/:platformId', gameplatforms_get_singleplatform);
 

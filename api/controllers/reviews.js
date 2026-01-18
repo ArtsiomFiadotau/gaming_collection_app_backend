@@ -1,15 +1,16 @@
 import validator from 'fastest-validator';
-import { sequelize, Review as _Review, Game, User as _User } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { Review, Game, User, sequelize } = getDB();
+//import { sequelize, Review as _Review, Game, User as _User } from '../../models';
 
 async function reviews_get_all(req, res, next){
-    const allReviews = _Review.findAll({
+    const allReviews = Review.findAll({
             include: [{
                 model: Game,
                 attributes: ['title']
             },
             {
-                model: _User,
+                model: User,
                 attributes: ['userName']
             }],
           exclude: ['updatedAt', 'createdAt'],
@@ -41,7 +42,7 @@ async function reviews_get_all(req, res, next){
 
 async function reviews_get_user(req, res, next){
     const userId = req.params.userId;
-    const User = await _Review.findAll(
+    const User = await Review.findAll(
         {
             where: {
                 userId: userId
@@ -76,13 +77,13 @@ async function reviews_get_user(req, res, next){
 
 async function reviews_get_game(req, res, next){
     const gameId = req.params.gameId;
-    const Review = await _Review.findAll(
+    const Review = await Review.findAll(
         {
             where: {
                 gameId: gameId
             },
             include: [{
-                                 model: _User,
+                                 model: User,
                                  attributes: ['userName']
                              }]
         })
@@ -134,7 +135,7 @@ async function reviews_add_review(req, res, next){
             });
         }
 
-    const newReview = _Review.create(review).then(result => {
+    const newReview = Review.create(review).then(result => {
         console.log(result);
         res.status(201).json({
             message: 'New review added succesfully!',
@@ -160,7 +161,7 @@ async function reviews_add_review(req, res, next){
 
 async function reviews_get_single(req, res, next){
     const id = req.params.reviewId;
-    const singleReview = _Review.findByPk(id, {
+    const singleReview = Review.findByPk(id, {
         attributes: {
           exclude: ['updatedAt', 'createdAt'],
         },
@@ -211,7 +212,7 @@ async function reviews_modify_review(req, res, next){
             });
         }
 
-    const updreview = _Review.update(updatedReview, {where: { reviewId: id }})
+    const updreview = Review.update(updatedReview, {where: { reviewId: id }})
     .then(result => {
         res.status(200).json({
             message: 'Review data updated!',
@@ -232,7 +233,7 @@ async function reviews_modify_review(req, res, next){
 
 async function reviews_delete_review(req, res, next){
     const id = req.params.reviewId;
-    const destroyReview = _Review.destroy({where:{reviewId: id}})
+    const destroyReview = Review.destroy({where:{reviewId: id}})
     .then(result => {
         res.status(200).json({
             message: 'Review deleted!',

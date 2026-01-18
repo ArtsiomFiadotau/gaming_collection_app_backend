@@ -1,6 +1,7 @@
 import validator from 'fastest-validator';
-import { sequelize, GamePlatform } from '../../models';
-sequelize.sync();
+import { getDB } from '../../models/index.js';
+const { GamePlatform, sequelize } = getDB();
+//import { sequelize, GamePlatform } from '../../models';
 
 async function gameplatforms_get_singlegame(req, res, next){
     const gameId = req.params.gameId;

@@ -70,13 +70,13 @@ export async function initializeDatabase() {
       const dropOrder = [  
         'CollectionItems',
         'ListItems', 
-        'Games', 
-        'Platforms',
-        'Users',  
         'GamePlatform',
         'GameLists',  
         'Comments',
-        'Reviews',      
+        'Reviews',
+        'Games', 
+        'Platforms',
+        'Users',        
        
        
         // добавьте остальные таблицы при необходимости  

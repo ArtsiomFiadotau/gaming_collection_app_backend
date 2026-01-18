@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
-import { urlencoded, json } from 'body-parser';
+import pkg from 'body-parser';
+const { urlencoded, json } = pkg;
 import collectionItemsRoutes from './api/routes/collectionitems.js';
 import commentsRoutes from './api/routes/comments.js';
 import gameListsRoutes from './api/routes/gamelists.js';

@@ -276,7 +276,7 @@ async function comments_delete_comment(req, res, next){
     });
 }
 
-export default {
+export {
     comments_get_all,
     comments_get_user,
     comments_get_review,

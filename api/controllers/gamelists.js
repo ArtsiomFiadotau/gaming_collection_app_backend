@@ -198,7 +198,7 @@ async function gamelists_delete_gamelist(req, res, next){
     });
 }
 
-export default {
+export {
     gamelists_get_all,
     gamelists_get_user,
     gamelists_add_gamelist,

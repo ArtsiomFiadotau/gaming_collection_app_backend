@@ -139,7 +139,7 @@ async function listitems_add_listitem(req, res, next) {
       });
   }
 
-export default {
+export {
     listitems_get_singlelist,
     listitems_add_listitem,
     listitems_delete_listitem

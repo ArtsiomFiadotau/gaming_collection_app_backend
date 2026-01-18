@@ -252,7 +252,7 @@ async function reviews_delete_review(req, res, next){
     });
 }
 
-export default {
+export {
     reviews_get_all,
     reviews_get_user,
     reviews_get_game,

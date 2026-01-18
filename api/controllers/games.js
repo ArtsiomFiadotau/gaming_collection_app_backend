@@ -166,7 +166,7 @@ async function games_delete_game(req, res, next){
     });
 }
 
-export default {
+export {
     games_get_all,
     games_add_game,
     games_get_single,

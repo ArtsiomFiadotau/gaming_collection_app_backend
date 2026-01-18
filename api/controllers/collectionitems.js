@@ -273,10 +273,10 @@ const schema = {
       });
   }
 
-export default {
+export {
   collectionitems_get_collectionitem,
   collectionitems_get_usercollection,
   collectionitems_add_collectionitem,
   collectionitems_modify_collectionitem,
   collectionitems_delete_collectionitem
-}
+};

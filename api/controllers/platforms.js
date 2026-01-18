@@ -159,7 +159,7 @@ async function platforms_delete_platform(req, res, next){
         });
     }
 
-    export default {
+    export {
         platforms_get_all,
         platforms_add_platform,
         platforms_get_single,

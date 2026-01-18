@@ -156,7 +156,7 @@ async function gameplatforms_delete_gameplatform(req, res, next) {
     });
 }
 
-export default {
+export {
     gameplatforms_get_singleplatform,
     gameplatforms_get_singlegame,
     gameplatforms_add_gameplatform,

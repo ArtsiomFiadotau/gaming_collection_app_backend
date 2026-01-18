@@ -4,7 +4,7 @@ export default (sequelize, DataTypes) => {
   class Platform extends Model {
     static associate(models) {
       Platform.belongsToMany(models.Game, {
-        through: 'GamePlatform',
+        through: 'GamePlatforms',
         foreignKey: 'platformId',
         otherKey: 'gameId',
       });

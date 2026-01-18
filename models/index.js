@@ -14,11 +14,42 @@ const config = rawConfig[env] || {
   password: process.env.DATABASE_PASSWORD,
   database: process.env.DATABASE_NAME,
   host: process.env.DATABASE_HOST,
-  dialect: process.env.DATABASE_DIALECT || 'mysql2',
+  dialect: process.env.DATABASE_DIALECT || 'mysql',
 };
 
 let sequelize;
 const db = {};
+
+// нормализация имени для поиска
+function normalizeName(n) {
+  return (n || '').toString().toLowerCase();
+}
+
+// ищем модель по имени модели или по tableName, пробуем варианты plural/singular
+function findModel(dbObj, desired) {
+  if (!desired) return null;
+  const want = normalizeName(desired);
+
+  for (const key of Object.keys(dbObj)) {
+    const m = dbObj[key];
+    if (!m) continue;
+    if (m.name && normalizeName(m.name) === want) return m;
+    const table = typeof m.getTableName === 'function' ? m.getTableName() : (m.tableName || '');
+    if (table && normalizeName(table) === want) return m;
+  }
+
+  // простая попытка добавить/убрать 's'
+  const alt = want.endsWith('s') ? want.slice(0, -1) : `${want}s`;
+  for (const key of Object.keys(dbObj)) {
+    const m = dbObj[key];
+    if (!m) continue;
+    if (m.name && normalizeName(m.name) === alt) return m;
+    const table = typeof m.getTableName === 'function' ? m.getTableName() : (m.tableName || '');
+    if (table && normalizeName(table) === alt) return m;
+  }
+
+  return null;
+}
 
 export async function initializeDatabase() {
   if (sequelize) return db;
@@ -29,7 +60,7 @@ export async function initializeDatabase() {
   } else {
     sequelize = new Sequelize(config.database, config.username, config.password, {
       host: config.host,
-      dialect: config.dialect || 'mysql2',
+      dialect: config.dialect || 'mysql',
       logging: false,
     });
   }
@@ -57,6 +88,7 @@ export async function initializeDatabase() {
   db.sequelize = sequelize;
   db.Sequelize = Sequelize;
 
+  // Диагностика: какие модели загружены
   console.log('Loaded model keys:', Object.keys(db));
   for (const k of Object.keys(db)) {
     const m = db[k];
@@ -67,9 +99,6 @@ export async function initializeDatabase() {
       console.log(`  model key="${k}", model.name="${m && m.name}" (error reading tableName)`);
     }
   }
-  if (!Object.keys(db).some(n => n.toLowerCase() === 'users' || n.toLowerCase() === 'user')) {
-    throw new Error('User model not found in loaded models. Ensure there is a model file exporting the User model (name/tableName "User" or "Users") in the models folder.');
-  }
 
   // Опция пересоздания: 'true' => force, 'alter' => alter
   const recreate = process.env.RECREATE_DB; // 'true' | 'alter' | undefined
@@ -78,8 +107,7 @@ export async function initializeDatabase() {
     if (recreate === 'true') {
       console.log('RECREATE_DB=true -> dropping tables in proper order and syncing with force');
 
-      // Явно удалить зависимые таблицы перед sync, чтобы избежать ошибок внешних ключей
-      // Указываем порядок удаления (оставляем как у вас)
+      // Порядок удаления TABLES (оставляем ваш порядок)
       const dropOrder = [
         'CollectionItems',
         'ListItems',
@@ -103,40 +131,41 @@ export async function initializeDatabase() {
       }
       await sequelize.query(`SET FOREIGN_KEY_CHECKS=1;`);
 
-      // Синхронизируем модели в порядке создания (родительские сначала, дочерние потом).
-      // Настройте этот список в соответствии с именами моделей, которые у вас загружены в db.
+      // Явный порядок синхронизации (подстроен под ваши реальные model.name из логов)
+      // Можно менять порядок при добавлении/изменении моделей.
       const syncOrder = [
-        // Родительские / независимые модели
-        'Users',
-        'Platforms',
-        'Games',
-        'GameLists',
-
-        // Модели с зависимостями / дополнительные
-        'Reviews',
-        'Comments',
-
-        // Таблицы many-to-many / join / дочерние
-        'GamePlatforms',
-        'ListItems',
-        'CollectionItems',
+        'User',          // ожидается model.name === 'User', tableName 'Users'
+        'Platform',      // model.name 'Platform'
+        'Game',          // model.name 'Game'
+        'GameList',      // model.name 'GameList'
+        'Review',        // model.name 'Review'
+        'Comment',       // model.name 'Comment'
+        'GamePlatform',  // join
+        'ListItem',      // join
+        'CollectionItem' // join / child
       ];
 
-      for (const modelName of syncOrder) {
-        if (db[modelName]) {
-          console.log(`Sync model (force): ${modelName}`);
-          // force true чтобы пересоздать таблицу
-          await db[modelName].sync({ force: true });
+      const syncedNames = new Set();
+
+      // синхронизируем по списку, находя модель гибко
+      for (const entry of syncOrder) {
+        const model = findModel(db, entry);
+        if (model) {
+          console.log(`Sync model (force): ${model.name} (requested: ${entry})`);
+          await model.sync({ force: true });
+          syncedNames.add(model.name);
         } else {
-          console.log(`Model not found (skipping): ${modelName}`);
+          console.log(`Model not found (skipping): ${entry}`);
         }
       }
 
-      // На всякий случай синхронизируем оставшиеся модели, которые могли не быть в списке
-      const remaining = Object.keys(db).filter((n) => !syncOrder.includes(n) && n !== 'sequelize' && n !== 'Sequelize');
+      // синхронизируем оставшиеся модели, которых не было в syncOrder
+      const remaining = Object.keys(db).filter((k) => k !== 'sequelize' && k !== 'Sequelize' && !syncedNames.has(k));
       for (const modelName of remaining) {
-        console.log(`Sync remaining model (force): ${modelName}`);
-        await db[modelName].sync({ force: true });
+        const model = db[modelName];
+        if (!model) continue;
+        console.log(`Sync remaining model (force): ${model.name}`);
+        await model.sync({ force: true });
       }
 
       console.log('Database synced by individual model order (force: true)');

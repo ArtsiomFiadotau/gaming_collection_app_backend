@@ -69,12 +69,12 @@ export async function initializeDatabase() {
       // Если у вас список моделей другой — добавьте/измените имена.  
       const dropOrder = [  
         'CollectionItems',
-        'ListItems',  
+        'ListItems', 
+        'Games', 
         'GamePlatform',
         'GameLists',  
         'Comments',
-        'Reviews', 
-        'Games',     
+        'Reviews',      
         'Users',  
         'Platforms',
         // добавьте остальные таблицы при необходимости  

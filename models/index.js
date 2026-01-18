@@ -71,12 +71,14 @@ export async function initializeDatabase() {
         'CollectionItems',
         'ListItems', 
         'Games', 
+        'Platforms',
+        'Users',  
         'GamePlatform',
         'GameLists',  
         'Comments',
         'Reviews',      
-        'Users',  
-        'Platforms',
+       
+       
         // добавьте остальные таблицы при необходимости  
       ];  
 

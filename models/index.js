@@ -77,11 +77,8 @@ export async function initializeDatabase() {
         'Games', 
         'Platforms',
         'Users',        
-       
-       
-        // добавьте остальные таблицы при необходимости  
       ];  
-
+      await sequelize.query(`SET FOREIGN_KEY_CHECKS=0;`);  
       for (const tableName of dropOrder) {  
         try {  
           // raw query безопасно игнорирует отсутствие таблицы  
@@ -91,6 +88,7 @@ export async function initializeDatabase() {
           console.warn(`Failed to drop table ${tableName}:`, e.message);  
         }  
       }  
+      await sequelize.query(`SET FOREIGN_KEY_CHECKS=1;`);  
 
       // После ручного удаления делаем sync force  
       await sequelize.sync({ force: true });  

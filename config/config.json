@@ -6,7 +6,8 @@
     "username": "DATABASE_USER",
     "password": "DATABASE_PASSWORD",
     "port": "DATABASE_PORT",
-    "dialect": "mysql2"
+    "dialect": "mysql2",
+    "JWT_KEY": "secred"
   },
   "test": {
     "use_env_variable": "DATABASE_URL"
@@ -18,6 +19,7 @@
     "username": "DATABASE_USER",
     "password": "DATABASE_PASSWORD",
     "port": "DATABASE_PORT",
-    "dialect": "mysql2"
+    "dialect": "mysql2",
+    "JWT_KEY": "secred"
   }
 }

@@ -1,4 +1,5 @@
-import { verify } from 'jsonwebtoken';
+const { verify } = pkg;
+import pkg from 'jsonwebtoken';
 
 export default (req, res, next) => {
     try {

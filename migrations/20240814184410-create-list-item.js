@@ -4,18 +4,20 @@ export async function up(queryInterface, Sequelize) {
   await queryInterface.createTable('ListItems', {
     listId: {
       allowNull: false,
+      primaryKey: true,
       type: Sequelize.INTEGER,
       references: {
-        model: 'GameList',
+        model: 'GameLists',
         key: 'listId'
       },
       onUpdate: 'NO ACTION',
       onDelete: 'CASCADE'
     },
     gameId: {
+      primaryKey: true,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Game',
+        model: 'Games',
         key: 'gameId'
       },
       onUpdate: 'CASCADE',

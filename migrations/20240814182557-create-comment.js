@@ -12,7 +12,7 @@ export async function up(queryInterface, Sequelize) {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'User',
+        model: 'Users',
         key: 'userId'
       },
       onUpdate: 'CASCADE',
@@ -22,7 +22,7 @@ export async function up(queryInterface, Sequelize) {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Review',
+        model: 'Reviews',
         key: 'reviewId'
       },
       onUpdate: 'CASCADE',

@@ -7,7 +7,7 @@ export async function up(queryInterface, Sequelize) {
       primaryKey: true,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Games',
+        model: 'Game',
         key: 'gameId'
       },
       onUpdate: 'CASCADE',
@@ -18,7 +18,7 @@ export async function up(queryInterface, Sequelize) {
       primaryKey: true,
       type: Sequelize.INTEGER,
       references: {
-        model: 'Platforms',
+        model: 'Platform',
         key: 'platformId'
       },
       onUpdate: 'CASCADE',

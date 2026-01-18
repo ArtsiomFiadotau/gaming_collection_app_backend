@@ -6,7 +6,7 @@ export async function up(queryInterface, Sequelize) {
       allowNull: false,
       type: Sequelize.INTEGER,
       references: {
-        model: 'GameLists',
+        model: 'GameList',
         key: 'listId'
       },
       onUpdate: 'NO ACTION',
@@ -15,7 +15,7 @@ export async function up(queryInterface, Sequelize) {
     gameId: {
       type: Sequelize.INTEGER,
       references: {
-        model: 'Games',
+        model: 'Game',
         key: 'gameId'
       },
       onUpdate: 'CASCADE',
@@ -33,7 +33,7 @@ export async function up(queryInterface, Sequelize) {
   await queryInterface.addConstraint('ListItems', {
     fields: ['listId', 'gameId'],
     type: 'unique',
-    name: 'unique_list_game' // уникальное имя для индекса составного первичного ключа
+    name: 'unique_list_item' // уникальное имя для индекса составного первичного ключа
   });
 }
 export async function down(queryInterface, Sequelize) {

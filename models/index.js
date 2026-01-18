@@ -57,6 +57,20 @@ export async function initializeDatabase() {
   db.sequelize = sequelize;
   db.Sequelize = Sequelize;
 
+  console.log('Loaded model keys:', Object.keys(db));
+  for (const k of Object.keys(db)) {
+    const m = db[k];
+    try {
+      const table = typeof m.getTableName === 'function' ? m.getTableName() : (m.tableName || '(no tableName)');
+      console.log(`  model key="${k}", model.name="${m.name}", tableName="${table}"`);
+    } catch (e) {
+      console.log(`  model key="${k}", model.name="${m && m.name}" (error reading tableName)`);
+    }
+  }
+  if (!Object.keys(db).some(n => n.toLowerCase() === 'users' || n.toLowerCase() === 'user')) {
+    throw new Error('User model not found in loaded models. Ensure there is a model file exporting the User model (name/tableName "User" or "Users") in the models folder.');
+  }
+
   // Опция пересоздания: 'true' => force, 'alter' => alter
   const recreate = process.env.RECREATE_DB; // 'true' | 'alter' | undefined
 

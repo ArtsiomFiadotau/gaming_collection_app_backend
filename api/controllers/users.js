@@ -5,13 +5,22 @@ const { sign } = pkg;
 import { getDB } from '../../models/index.js';
 import { promisify } from 'util';
 
-const { User } = getDB();
 const hash = promisify(_hash);
 const compare = promisify(_compare);
 const v = new Validator();
 
+// Helper function to get User model safely
+function getUserModel() {
+  const db = getDB();
+  if (!db || !db.User) {
+    throw new Error('Database not initialized. User model not available.');
+  }
+  return db.User;
+}
+
 async function users_signup(req, res, next) {
   try {
+    const User = getUserModel();
     const existing = await User.findOne({ where: { email: req.body.email } });
     if (existing) {
       return res.status(409).json({ message: 'Email exists' });
@@ -57,6 +66,7 @@ async function users_signup(req, res, next) {
 
 async function users_login(req, res, next) {
   try {
+    const User = getUserModel();
     const user = await User.findOne({ where: { email: req.body.email } });
     if (!user) {
       return res.status(401).json({ message: 'Authorisation failed' });
@@ -88,6 +98,7 @@ async function users_login(req, res, next) {
 async function users_delete(req, res, next) {
   const id = req.params.userId;
   try {
+    const User = getUserModel();
     const deletedCount = await User.destroy({ where: { userId: id } });
     if (deletedCount > 0) {
       return res.status(200).json({ message: 'User deleted' });
@@ -135,7 +146,8 @@ async function users_modify_user(req, res, next) {
     return res.status(400).json({ message: 'Validation failed', errors: validationResponse });
   }
 
-  try {
+try {
+    const User = getUserModel();
     if (updatedUser.password) {
       updatedUser.password = await hash(updatedUser.password, 10);
     }

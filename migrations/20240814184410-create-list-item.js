@@ -14,6 +14,7 @@ export async function up(queryInterface, Sequelize) {
       onDelete: 'CASCADE'
     },
     gameId: {
+      allowNull: false,
       primaryKey: true,
       type: Sequelize.INTEGER,
       references: {

@@ -1,6 +1,7 @@
 import Validator from 'fastest-validator';
 import { hash as _hash, compare as _compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import pkg from 'jsonwebtoken';
+const { sign } = pkg;
 import { getDB } from '../../models/index.js';
 import { promisify } from 'util';
 

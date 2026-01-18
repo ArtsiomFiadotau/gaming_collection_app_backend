@@ -15,7 +15,7 @@
 //     console.log(`Server listening on port ${port}`);
 //   });
 
-  import 'dotenv/config';
+  //import 'dotenv/config';
   import http from 'http';
   import app from './app.js';
   import { initializeDatabase } from './models/index.js'; // ваш index.js с initializeDatabase

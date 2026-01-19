@@ -40,25 +40,25 @@ async function games_add_game(req, res, next){
         coverImage: req.body.coverImage,
     };
 
-    const schema = {
-        title: {type:"string", optional: false, max: '50'},
-        genre: {type:"string", optional: false, max: '50'},
-        developer: {type:"string", optional: false, max: '50'},
-        releaseDate: {type:"date", optional: false, convert: true},
-        description: {type:"string", optional: true, max: '200'},
-        averageRating: {type:"number", optional: true},
-        coverImage: {type:"string", optional: true, max: '200'},
-    }
+    // const schema = {
+    //     title: {type:"string", optional: false, max: '50'},
+    //     genre: {type:"string", optional: false, max: '50'},
+    //     developer: {type:"string", optional: false, max: '50'},
+    //     releaseDate: {type:"date", optional: false, convert: true},
+    //     description: {type:"string", optional: true, max: '200'},
+    //     averageRating: {type:"number", optional: true},
+    //     coverImage: {type:"string", optional: true, max: '200'},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(game, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(game, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newGame = Game.create(game).then(result => {
         console.log(result);

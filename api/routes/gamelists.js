@@ -8,12 +8,12 @@ router.get('/', gamelists_get_all);
 
 router.get('/user/:userId', gamelists_get_user);
 
-router.post('/', checkAuth, gamelists_add_gamelist);
+router.post('/', gamelists_add_gamelist);
 
 router.get('/:listId', gamelists_get_single);
 
-router.patch('/:listId', checkAuth, gamelists_modify_gamelist);
+router.patch('/:listId', gamelists_modify_gamelist);
 
-router.delete('/:listId', checkAuth, gamelists_delete_gamelist);
+router.delete('/:listId', gamelists_delete_gamelist);
 
 export default router;

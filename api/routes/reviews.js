@@ -10,12 +10,12 @@ router.get('/game/:gameId', reviews_get_game);
 
 router.get('/user/:userId', reviews_get_user);
 
-router.post('/', checkAuth, reviews_add_review);
+router.post('/', reviews_add_review);
 
 router.get('/:reviewId', reviews_get_single);
 
-router.patch('/:reviewId', checkAuth, reviews_modify_review);
+router.patch('/:reviewId', reviews_modify_review);
 
-router.delete('/:reviewId', checkAuth, reviews_delete_review);
+router.delete('/:reviewId', reviews_delete_review);
 
 export default router;

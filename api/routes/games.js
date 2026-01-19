@@ -10,8 +10,8 @@ router.post('/', checkAuth, games_add_game);
 
 router.get('/:gameId', games_get_single);
 
-router.patch('/:gameId', checkAuth, games_modify_game);
+router.patch('/:gameId', games_modify_game);
 
-router.delete('/:gameId', checkAuth, games_delete_game);
+router.delete('/:gameId', games_delete_game);
 
 export default router;

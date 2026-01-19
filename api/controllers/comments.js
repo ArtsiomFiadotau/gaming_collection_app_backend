@@ -131,21 +131,21 @@ async function comments_add_comment(req, res, next){
         reviewId: req.body.reviewId,
     };
 
-    const schema = {
-        commentText: {type:"string", optional: false, max: '1000'},
-        userId: {type:"number", optional: false},
-        reviewId: {type:"number", optional: false},
-    }
+    // const schema = {
+    //     commentText: {type:"string", optional: false, max: '1000'},
+    //     userId: {type:"number", optional: false},
+    //     reviewId: {type:"number", optional: false},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(comment, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(comment, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newComment = Comment.create(comment).then(result => {
         console.log(result);
@@ -220,21 +220,21 @@ async function comments_modify_comment(req, res, next){
         // reviewId: req.body.reviewId,
     };
     
-    const schema = {
-        commentText: {type:"string", optional: true, max: '1000'},
-        // userId: {type:"number", optional: true},
-        // reviewId: {type:"number", optional: true},
-    }
+    // const schema = {
+    //     commentText: {type:"string", optional: true, max: '1000'},
+    //     // userId: {type:"number", optional: true},
+    //     // reviewId: {type:"number", optional: true},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(updatedComment, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(updatedComment, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const updComment = Comment.update(updatedComment, {where: { commentId: id }})
     .then(result => {

@@ -8,10 +8,10 @@ router.get('/platform/:platformId', gameplatforms_get_singleplatform);
 
 router.get('/game/:gameId', gameplatforms_get_singlegame);
 
-router.post('/', checkAuth, gameplatforms_add_gameplatform);
+router.post('/', gameplatforms_add_gameplatform);
 
-router.patch('/:gameId/:platformId', checkAuth, gameplatforms_modify_gameplatform);
+router.patch('/:gameId/:platformId', gameplatforms_modify_gameplatform);
 
-router.delete('/:gameId/:platformId', checkAuth, gameplatforms_delete_gameplatform);
+router.delete('/:gameId/:platformId', gameplatforms_delete_gameplatform);
 
 export default router;

@@ -10,12 +10,12 @@ router.get('/review/:reviewId', comments_get_review);
 
 router.get('/user/:userId', comments_get_user);
 
-router.post('/', checkAuth, comments_add_comment);
+router.post('/', comments_add_comment);
 
 router.get('/:commentId', comments_get_single);
 
-router.patch('/:commentId', checkAuth, comments_modify_comment);
+router.patch('/:commentId', comments_modify_comment);
 
-router.delete('/:commentId', checkAuth, comments_delete_comment);
+router.delete('/:commentId', comments_delete_comment);
 
 export default router;

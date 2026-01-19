@@ -118,22 +118,22 @@ async function reviews_add_review(req, res, next){
         gameId: req.body.gameId,
     };
 
-    const schema = {
-        reviewTitle: {type:"string", optional: false, max: '50'},
-        reviewText: {type:"string", optional: false, max: '2000'},
-        userId: {type:"number", optional: false},
-        gameId: {type:"number", optional: false},
-    }
+    // const schema = {
+    //     reviewTitle: {type:"string", optional: false, max: '50'},
+    //     reviewText: {type:"string", optional: false, max: '2000'},
+    //     userId: {type:"number", optional: false},
+    //     gameId: {type:"number", optional: false},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(review, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(review, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newReview = Review.create(review).then(result => {
         console.log(result);
@@ -195,22 +195,22 @@ async function reviews_modify_review(req, res, next){
         // gameId: req.body.gameId,
     };
     
-    const schema = {
-        reviewTitle: {type:"string", optional: false, max: '50'},
-        reviewText: {type:"string", optional: false, max: '2000'},
-        // userId: {type:"number", optional: false},
-        // gameId: {type:"number", optional: false},
-    }
+    // const schema = {
+    //     reviewTitle: {type:"string", optional: false, max: '50'},
+    //     reviewText: {type:"string", optional: false, max: '2000'},
+    //     // userId: {type:"number", optional: false},
+    //     // gameId: {type:"number", optional: false},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(updatedReview, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(updatedReview, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const updreview = Review.update(updatedReview, {where: { reviewId: id }})
     .then(result => {

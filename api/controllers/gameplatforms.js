@@ -53,20 +53,20 @@ async function gameplatforms_add_gameplatform(req, res, next) {
         platformId: req.body.platformId,
         };
 
-        const schema = {
-            gameId: {type:"string", optional: false},
-            platformId: {type:"string", optional: false},
-        }
+        // const schema = {
+        //     gameId: {type:"string", optional: false},
+        //     platformId: {type:"string", optional: false},
+        // }
             
-        const v = new validator();
-        const validationResponse = v.validate(gamePlatform, schema);
+        // const v = new validator();
+        // const validationResponse = v.validate(gamePlatform, schema);
             
-            if(validationResponse !== true){
-                return res.status(400).json({
-                    message: "Validation failed",
-                    errors: validationResponse
-                });
-            }
+        //     if(validationResponse !== true){
+        //         return res.status(400).json({
+        //             message: "Validation failed",
+        //             errors: validationResponse
+        //         });
+        //     }
 
         if (gamePlatform.gameId && gamePlatform.platformId) {
     const newGamePlatform = await GamePlatform.create(gamePlatform).then(result => {
@@ -100,20 +100,20 @@ async function gameplatforms_modify_gameplatform(req, res, next) {
         platformId: req.body.platformId,
     };
     
-    const schema = {
-        gameId: {type:"number", optional: true},
-        platformId: {type:"string", optional: true},
-    }
+    // const schema = {
+    //     gameId: {type:"number", optional: true},
+    //     platformId: {type:"string", optional: true},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(updatedGamePlatform, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(updatedGamePlatform, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const updGamePlatform = await GamePlatform.update(updatedGamePlatform, {where: {gameId: id1, platformId: id2}})
     .then(result => {

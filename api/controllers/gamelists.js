@@ -70,20 +70,20 @@ async function gamelists_add_gamelist(req, res, next){
         userId: req.body.userId,
     };
 
-    const schema = {
-        listTitle: {type:"string", optional: false, max: '200'},
-        userId: {type:"number", optional: false},
-    }
+    // const schema = {
+    //     listTitle: {type:"string", optional: false, max: '200'},
+    //     userId: {type:"number", optional: false},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(gameList, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(gameList, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newGameList = GameList.create(gameList).then(result => {
         console.log(result);
@@ -143,20 +143,20 @@ async function gamelists_modify_gamelist(req, res, next){
         userId: req.body.userId,
     };
     
-    const schema = {
-        listTitle: {type:"string", optional: true, max: '200'},
-        userId: {type:"number", optional: true},
-    }
+    // const schema = {
+    //     listTitle: {type:"string", optional: true, max: '200'},
+    //     userId: {type:"number", optional: true},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(updatedGameList, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(updatedGameList, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const updGameList = GameList.update(updatedGameList, {where: { listId: id }})
     .then(result => {

@@ -7,12 +7,12 @@ import { platforms_get_all, platforms_add_platform, platforms_get_single, platfo
 
 router.get('/', platforms_get_all);
 
-router.post('/', checkAuth, platforms_add_platform);
+router.post('/', platforms_add_platform);
 
 router.get('/:platformId', platforms_get_single);
 
-router.patch('/:platformId', checkAuth, platforms_modify_platform);
+router.patch('/:platformId', platforms_modify_platform);
 
-router.delete('/:platformId', checkAuth, platforms_delete_platform);
+router.delete('/:platformId', platforms_delete_platform);
 
 export default router;

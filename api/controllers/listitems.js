@@ -62,20 +62,20 @@ async function listitems_add_listitem(req, res, next) {
         listId: req.body.listId,
         };
 
-        const schema = {
-            gameId: {type:"number", optional: false},
-            listId: {type:"number", optional: false},
-        }
+        // const schema = {
+        //     gameId: {type:"number", optional: false},
+        //     listId: {type:"number", optional: false},
+        // }
             
-        const v = new validator();
-        const validationResponse = v.validate(listItem, schema);
+        // const v = new validator();
+        // const validationResponse = v.validate(listItem, schema);
             
-            if(validationResponse !== true){
-                return res.status(400).json({
-                    message: "Validation failed",
-                    errors: validationResponse
-                });
-            }
+        //     if(validationResponse !== true){
+        //         return res.status(400).json({
+        //             message: "Validation failed",
+        //             errors: validationResponse
+        //         });
+        //     }
 
         if (listItem.gameId && listItem.listId) {
     const newListItem = await ListItem.create(listItem).then(result => {
@@ -106,19 +106,19 @@ async function listitems_add_listitem(req, res, next) {
         listId: req.body.listId,
         gameId: req.body.gameId}
   
-        const schema = {
-          listId: {type:"number", optional: false},
-          gameId: {type:"number", optional: false}}
+      //   const schema = {
+      //     listId: {type:"number", optional: false},
+      //     gameId: {type:"number", optional: false}}
           
-      const v = new validator();
-      const validationResponse = v.validate(delListItem, schema);
+      // const v = new validator();
+      // const validationResponse = v.validate(delListItem, schema);
           
-          if(validationResponse !== true){
-              return res.status(400).json({
-                  message: "Validation failed",
-                  errors: validationResponse
-              });
-          }
+      //     if(validationResponse !== true){
+      //         return res.status(400).json({
+      //             message: "Validation failed",
+      //             errors: validationResponse
+      //         });
+      //     }
 
       const destroyListItem = ListItem.destroy({where:{listId: delListItem.listId, gameId: delListItem.gameId}})
       .then(result => {

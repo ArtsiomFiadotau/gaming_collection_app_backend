@@ -122,26 +122,26 @@ async function collectionitems_add_collectionitem(req, res, next){
       dateCompleted: req.body.dateCompleted,
   };
 
-  const schema = {
-      userId: {type:"number", optional: false},
-      gameId: {type:"number", optional: false},
-      platformId: {type:"string", optional: false},
-      rating: {type:"number", optional: true},
-      status: {type:"string", optional: false},
-      isOwned: {type:"boolean", optional: false},
-      dateStarted: {type:"date", optional: true},
-      dateCompleted: {type:"date", optional: true},
-  }
+  // const schema = {
+  //     userId: {type:"number", optional: false},
+  //     gameId: {type:"number", optional: false},
+  //     platformId: {type:"string", optional: false},
+  //     rating: {type:"number", optional: true},
+  //     status: {type:"string", optional: false},
+  //     isOwned: {type:"boolean", optional: false},
+  //     dateStarted: {type:"date", optional: true},
+  //     dateCompleted: {type:"date", optional: true},
+  // }
       
-  const v = new validator();
-  const validationResponse = v.validate(collectionItem, schema);
+  // const v = new validator();
+  // const validationResponse = v.validate(collectionItem, schema);
       
-      if(validationResponse !== true){
-          return res.status(400).json({
-              message: "Validation failed",
-              errors: validationResponse
-          });
-      }
+  //     if(validationResponse !== true){
+  //         return res.status(400).json({
+  //             message: "Validation failed",
+  //             errors: validationResponse
+  //         });
+  //     }
 
   const newCollectionItem = CollectionItem.create(collectionItem).then(result => {
       res.status(201).json({
@@ -182,26 +182,26 @@ async function collectionitems_modify_collectionitem(req, res, next) {
     dateCompleted: req.body.dateCompleted,
 };
 
-const schema = {
-    userId: {type:"number", optional: true},
-    gameId: {type:"number", optional: true},
-    platformId: {type:"string", optional: true},
-    rating: {type:"number", optional: true},
-    status: {type:"string", optional: true},
-    isOwned: {type:"boolean", optional: true},
-    dateStarted: {type:"date", optional: true},
-    dateCompleted: {type:"date", optional: true},
-}
+// const schema = {
+//     userId: {type:"number", optional: true},
+//     gameId: {type:"number", optional: true},
+//     platformId: {type:"string", optional: true},
+//     rating: {type:"number", optional: true},
+//     status: {type:"string", optional: true},
+//     isOwned: {type:"boolean", optional: true},
+//     dateStarted: {type:"date", optional: true},
+//     dateCompleted: {type:"date", optional: true},
+// }
       
-  const v = new validator();
-  const validationResponse = v.validate(updatedCollectionItem, schema);
+//   const v = new validator();
+//   const validationResponse = v.validate(updatedCollectionItem, schema);
       
-      if(validationResponse !== true){
-          return res.status(400).json({
-              message: "Validation failed",
-              errors: validationResponse
-          });
-      }
+//       if(validationResponse !== true){
+//           return res.status(400).json({
+//               message: "Validation failed",
+//               errors: validationResponse
+//           });
+//       }
 
   const updCollectionItem = await CollectionItem.update(updatedCollectionItem, 
     {where: {

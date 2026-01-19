@@ -8,9 +8,9 @@ router.get('/:userId/:gameId/:platformId', collectionitems_get_collectionitem);
 
 router.get('/:userId', collectionitems_get_usercollection);
 
-router.post('/', checkAuth, collectionitems_add_collectionitem);
+router.post('/', collectionitems_add_collectionitem);
 
-router.patch('/:userId/:gameId/:platformId', checkAuth, collectionitems_modify_collectionitem);
+router.patch('/:userId/:gameId/:platformId', collectionitems_modify_collectionitem);
 
 router.delete('/', checkAuth, collectionitems_delete_collectionitem);
 

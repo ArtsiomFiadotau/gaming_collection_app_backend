@@ -8,8 +8,8 @@ router.post("/signup", users_signup);
 
 router.post('/login', users_login)
 
-router.patch('/:userId', checkAuth, users_modify_user);
+router.patch('/:userId', users_modify_user);
 
-router.delete('/:userId', checkAuth, users_delete);
+router.delete('/:userId', users_delete);
 
 export default router;

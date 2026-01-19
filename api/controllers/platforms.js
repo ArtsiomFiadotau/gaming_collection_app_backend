@@ -38,19 +38,19 @@ async function platforms_add_platform(req, res, next){
         platformName: req.body.platformName,
     };
 
-    const schema = {
-        platformName: {type:"string", optional: false, max: '50'},
-    }
+    // const schema = {
+    //     platformName: {type:"string", optional: false, max: '50'},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(platform, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(platform, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newPlatform = Platform.create(platform).then(result => {
         console.log(result);
@@ -105,19 +105,19 @@ async function platforms_get_single(req, res, next){
             platformName: req.body.platformName,
 };
 
-const schema = {
-    platformName: {type:"string", optional: false, max: '50'},
-}
+// const schema = {
+//     platformName: {type:"string", optional: false, max: '50'},
+// }
     
-        const v = new validator();
-        const validationResponse = v.validate(updatedPlatform, schema);
+//         const v = new validator();
+//         const validationResponse = v.validate(updatedPlatform, schema);
     
-            if(validationResponse !== true){
-             return res.status(400).json({
-                 message: "Validation failed",
-                    errors: validationResponse
-                });
-         }
+//             if(validationResponse !== true){
+//              return res.status(400).json({
+//                  message: "Validation failed",
+//                     errors: validationResponse
+//                 });
+//          }
 
         const updPlatform = Platform.update(updatedPlatform, {where: { platformId: id }})
         .then(result => {

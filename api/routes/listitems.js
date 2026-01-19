@@ -6,8 +6,8 @@ import { listitems_get_singlelist, listitems_add_listitem, listitems_delete_list
 
 router.get('/:listId', listitems_get_singlelist);
 
-router.post('/', checkAuth, listitems_add_listitem);
+router.post('/', listitems_add_listitem);
 
-router.delete('/', checkAuth, listitems_delete_listitem);
+router.delete('/', listitems_delete_listitem);
 
 export default router;

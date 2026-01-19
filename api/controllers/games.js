@@ -2,7 +2,16 @@ import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
 const { Game, sequelize } = getDB();
 
+function getGameModel() {
+    const db = getDB();
+    if (!db || !db.Game) {
+      throw new Error('Database not initialized. Game model not available.');
+    }
+    return db.Game;
+  }
+
 async function games_get_all(req, res, next){
+    const Game = getGameModel();
     const allGames = Game.findAll({
         attributes: ['gameId', 'title'],
       })
@@ -30,6 +39,7 @@ async function games_get_all(req, res, next){
 }
 
 async function games_add_game(req, res, next){
+    const Game = getGameModel();
     const game = {
         title: req.body.title,
         genre: req.body.genre,
@@ -88,6 +98,7 @@ async function games_add_game(req, res, next){
 }
 
 async function games_get_single(req, res, next){
+    const Game = getGameModel();
     const id = req.params.gameId;
     const singleGame = Game.findByPk(id, {
         attributes: {
@@ -114,6 +125,7 @@ async function games_get_single(req, res, next){
 }
 
 async function games_modify_game(req, res, next){
+    const Game = getGameModel();
     const id = req.params.gameId;
     const updatedGame = {
         title: req.body.title,
@@ -145,6 +157,7 @@ async function games_modify_game(req, res, next){
 }
 
 async function games_delete_game(req, res, next){
+    const Game = getGameModel();
     const id = req.params.gameId;
     const destroyGame = Game.destroy({where:{gameId: id}})
     .then(result => {

@@ -88,7 +88,17 @@ async function users_login(req, res, next) {
       { expiresIn: '1h' }
     );
 
-    return res.status(200).json({ message: 'Authorisation successful', token });
+    const responseUser = {
+      userId: user.userId,
+      userName: user.userName,
+      email: user.email
+    };
+
+    return res.status(200).json({
+      message: 'Authorisation successful',
+      token,
+      user: responseUser
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: err.message || err });
@@ -146,7 +156,7 @@ async function users_modify_user(req, res, next) {
     return res.status(400).json({ message: 'Validation failed', errors: validationResponse });
   }
 
-try {
+  try {
     const User = getUserModel();
     if (updatedUser.password) {
       updatedUser.password = await hash(updatedUser.password, 10);

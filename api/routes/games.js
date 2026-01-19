@@ -6,7 +6,7 @@ import { games_get_all, games_add_game, games_get_single, games_modify_game, gam
 
 router.get('/', games_get_all);
 
-router.post('/', checkAuth, games_add_game);
+router.post('/', games_add_game);
 
 router.get('/:gameId', games_get_single);
 

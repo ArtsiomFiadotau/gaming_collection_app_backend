@@ -41,6 +41,7 @@ async function games_get_all(req, res, next){
 async function games_add_game(req, res, next){
     const Game = getGameModel();
     const game = {
+        gameId: req.body.gameId,
         title: req.body.title,
         genre: req.body.genre,
         developer: req.body.developer,

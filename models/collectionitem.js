@@ -30,7 +30,7 @@ export default (sequelize, DataTypes) => {
         primaryKey: true,
       },
       rating: DataTypes.INTEGER,
-      status: DataTypes.STRING(30),
+      status: DataTypes.STRING(100),
       isOwned: DataTypes.BOOLEAN,
       dateStarted: DataTypes.DATE,
       dateCompleted: DataTypes.DATE,

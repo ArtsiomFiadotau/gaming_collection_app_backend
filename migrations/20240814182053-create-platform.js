@@ -10,7 +10,7 @@ export async function up(queryInterface, Sequelize) {
     },
     platformName: {
       allowNull: false,
-      type: Sequelize.STRING
+      type: Sequelize.STRING(100)
     },
     createdAt: {
       allowNull: false,

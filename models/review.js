@@ -22,7 +22,7 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    reviewTitle: DataTypes.STRING(50),
+    reviewTitle: DataTypes.STRING(100),
     reviewText: DataTypes.STRING(2000),
     userId: DataTypes.INTEGER,
     gameId: DataTypes.INTEGER

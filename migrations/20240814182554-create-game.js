@@ -18,7 +18,7 @@ export async function up(queryInterface, Sequelize) {
     },
     developer: {
       allowNull: false,
-      type: Sequelize.STRING
+      type: Sequelize.STRING(500)
     },
     releaseDate: {
       allowNull: false,
@@ -26,7 +26,7 @@ export async function up(queryInterface, Sequelize) {
     },
     description: {
       allowNull: false,
-      type: Sequelize.STRING
+      type: Sequelize.STRING(2000)
     },
     averageRating: {
       allowNull: false,

@@ -31,7 +31,7 @@ export async function up(queryInterface, Sequelize) {
     },
     reviewTitle: {
       allowNull: true,
-      type: Sequelize.STRING(50)
+      type: Sequelize.STRING(100)
     },
     reviewText: {
       allowNull: false,

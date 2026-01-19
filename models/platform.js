@@ -16,7 +16,7 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    platformName: DataTypes.STRING(50)
+    platformName: DataTypes.STRING(100)
   }, {
     sequelize,
     modelName: 'Platform',

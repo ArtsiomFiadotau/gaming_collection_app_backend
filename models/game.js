@@ -24,9 +24,9 @@ export default (sequelize, DataTypes) => {
     },
     title: DataTypes.STRING(200),
     genre: DataTypes.STRING(200),
-    developer: DataTypes.STRING(200),
+    developer: DataTypes.STRING(500),
     releaseDate: DataTypes.STRING,
-    description: DataTypes.STRING,
+    description: DataTypes.STRING(2000),
     averageRating: DataTypes.INTEGER,
     coverImage: DataTypes.STRING
   }, {

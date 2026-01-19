@@ -22,7 +22,7 @@ export async function up(queryInterface, Sequelize) {
     },
     releaseDate: {
       allowNull: false,
-      type: Sequelize.DATE
+      type: Sequelize.STRING
     },
     description: {
       allowNull: false,
@@ -30,7 +30,7 @@ export async function up(queryInterface, Sequelize) {
     },
     averageRating: {
       allowNull: false,
-      type: Sequelize.TINYINT
+      type: Sequelize.INTEGER
     },
     coverImage: {
       allowNull: false,

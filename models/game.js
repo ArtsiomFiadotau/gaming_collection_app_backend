@@ -22,13 +22,13 @@ export default (sequelize, DataTypes) => {
       autoIncrement: true,
       primaryKey: true,
     },
-    title: DataTypes.STRING(50),
-    genre: DataTypes.STRING(50),
-    developer: DataTypes.STRING(50),
-    releaseDate: DataTypes.DATE,
-    description: DataTypes.STRING(200),
-    averageRating: DataTypes.TINYINT,
-    coverImage: DataTypes.STRING(30)
+    title: DataTypes.STRING(200),
+    genre: DataTypes.STRING(200),
+    developer: DataTypes.STRING(200),
+    releaseDate: DataTypes.STRING,
+    description: DataTypes.STRING,
+    averageRating: DataTypes.INTEGER,
+    coverImage: DataTypes.STRING
   }, {
     sequelize,
     modelName: 'Game',

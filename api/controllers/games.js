@@ -1,7 +1,6 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
 const { Game, sequelize } = getDB();
-//import { sequelize, Game } from '../../models';
 
 async function games_get_all(req, res, next){
     const allGames = Game.findAll({

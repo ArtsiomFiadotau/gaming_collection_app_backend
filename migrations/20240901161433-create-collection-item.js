@@ -25,7 +25,7 @@ export async function up(queryInterface, Sequelize) {
     },
     rating: {
       allowNull: false,
-      type: Sequelize.TINYINT,
+      type: Sequelize.INTEGER,
     },
     status: {
       allowNull: false,

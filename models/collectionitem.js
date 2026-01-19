@@ -29,7 +29,7 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      rating: DataTypes.TINYINT,
+      rating: DataTypes.INTEGER,
       status: DataTypes.STRING(30),
       isOwned: DataTypes.BOOLEAN,
       dateStarted: DataTypes.DATE,

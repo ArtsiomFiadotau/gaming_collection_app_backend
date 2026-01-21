@@ -40,16 +40,16 @@ async function games_get_all(req, res, next){
 
 async function games_add_game(req, res, next){
     const Game = getGameModel();
-    // const game = {
-    //     gameId: req.body.gameId,
-    //     title: req.body.title,
-    //     genre: req.body.genre,
-    //     developer: req.body.developer,
-    //     releaseDate: req.body.releaseDate,
-    //     description: req.body.description,
-    //     averageRating: req.body.averageRating,
-    //     coverImage: req.body.coverImage,
-    // };
+    const game = {
+        gameId: req.body.gameId,
+        title: req.body.title,
+        genre: req.body.genre,
+        developer: req.body.developer,
+        releaseDate: req.body.releaseDate,
+        description: req.body.description,
+        averageRating: req.body.averageRating,
+        coverImage: req.body.coverImage,
+    };
 
     // const schema = {
     //     title: {type:"string", optional: false, max: '200'},

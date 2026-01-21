@@ -135,12 +135,10 @@ export async function initializeDatabase() {
       // Можно менять порядок при добавлении/изменении моделей.
       const syncOrder = [
         'User',          // ожидается model.name === 'User', tableName 'Users'
-        'Platform',      // model.name 'Platform'
         'Game',          // model.name 'Game'
         'GameList',      // model.name 'GameList'
         'Review',        // model.name 'Review'
         'Comment',       // model.name 'Comment'
-        'GamePlatform',  // join
         'ListItem',      // join
         'CollectionItem' // join / child
       ];

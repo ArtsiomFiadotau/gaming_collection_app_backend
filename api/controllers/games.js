@@ -40,36 +40,36 @@ async function games_get_all(req, res, next){
 
 async function games_add_game(req, res, next){
     const Game = getGameModel();
-    const game = {
-        gameId: req.body.gameId,
-        title: req.body.title,
-        genre: req.body.genre,
-        developer: req.body.developer,
-        releaseDate: req.body.releaseDate,
-        description: req.body.description,
-        averageRating: req.body.averageRating,
-        coverImage: req.body.coverImage,
-    };
+    // const game = {
+    //     gameId: req.body.gameId,
+    //     title: req.body.title,
+    //     genre: req.body.genre,
+    //     developer: req.body.developer,
+    //     releaseDate: req.body.releaseDate,
+    //     description: req.body.description,
+    //     averageRating: req.body.averageRating,
+    //     coverImage: req.body.coverImage,
+    // };
 
-    const schema = {
-        title: {type:"string", optional: false, max: '200'},
-        genre: {type:"string", optional: false, max: '200'},
-        developer: {type:"string", optional: false, max: '500'},
-        releaseDate: {type:"date", optional: false, convert: true},
-        description: {type:"string", optional: true, max: '2000'},
-        averageRating: {type:"number", optional: true},
-        coverImage: {type:"string", optional: true, max: '255'},
-    }
+    // const schema = {
+    //     title: {type:"string", optional: false, max: '200'},
+    //     genre: {type:"string", optional: false, max: '200'},
+    //     developer: {type:"string", optional: false, max: '500'},
+    //     releaseDate: {type:"date", optional: false, convert: true},
+    //     description: {type:"string", optional: true, max: '2000'},
+    //     averageRating: {type:"number", optional: true},
+    //     coverImage: {type:"string", optional: true, max: '255'},
+    // }
         
-    const v = new validator();
-    const validationResponse = v.validate(game, schema);
+    // const v = new validator();
+    // const validationResponse = v.validate(game, schema);
         
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
-        }
+    //     if(validationResponse !== true){
+    //         return res.status(400).json({
+    //             message: "Validation failed",
+    //             errors: validationResponse
+    //         });
+    //     }
 
     const newGame = Game.create(game).then(result => {
         console.log(result);

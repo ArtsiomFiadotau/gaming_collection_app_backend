@@ -22,10 +22,6 @@ export default (sequelize, DataTypes) => {
         type: DataTypes.INTEGER,
         primaryKey: true,
       },
-      platformId: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-      },
       rating: DataTypes.INTEGER,
       status: DataTypes.STRING(100),
       isOwned: DataTypes.BOOLEAN,

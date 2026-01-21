@@ -1,9 +1,17 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
 const { Comment, Review, Game, User, sequelize } = getDB();
-//import { sequelize, Comment as _Comment, Review, Game, User as _User } from '../../models';
+
+function getCommentModel() {
+    const db = getDB();
+    if (!db || !db.Comment) {
+      throw new Error('Database not initialized. Comment model not available.');
+    }
+    return db.Comment;
+  }
 
 async function comments_get_all(req, res, next){
+    const Comment = getCommentModel();
     const allComments = Comment.findAll({
             include: [
             {
@@ -48,6 +56,7 @@ async function comments_get_all(req, res, next){
 
 
 async function comments_get_user(req, res, next){
+    const Comment = getCommentModel();
     const userId = req.params.userId;
     const User = await Comment.findAll(
         {
@@ -91,8 +100,9 @@ async function comments_get_user(req, res, next){
 }
 
 async function comments_get_review(req, res, next){
+    const Comment = getCommentModel();
     const reviewId = req.params.reviewId;
-    const Comment = await Comment.findAll(
+    const Review = await Comment.findAll(
         {
             where: {
                 reviewId: reviewId
@@ -125,27 +135,28 @@ async function comments_get_review(req, res, next){
 }
 
 async function comments_add_comment(req, res, next){
+    const Comment = getCommentModel();
     const comment = {
         commentText: req.body.commentText,
         userId: req.body.userId,
         reviewId: req.body.reviewId,
     };
 
-    // const schema = {
-    //     commentText: {type:"string", optional: false, max: '1000'},
-    //     userId: {type:"number", optional: false},
-    //     reviewId: {type:"number", optional: false},
-    // }
+    const schema = {
+        commentText: {type:"string", optional: false, max: '1000'},
+        userId: {type:"number", optional: false},
+        reviewId: {type:"number", optional: false},
+    }
         
-    // const v = new validator();
-    // const validationResponse = v.validate(comment, schema);
+    const v = new validator();
+    const validationResponse = v.validate(comment, schema);
         
-    //     if(validationResponse !== true){
-    //         return res.status(400).json({
-    //             message: "Validation failed",
-    //             errors: validationResponse
-    //         });
-    //     }
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
 
     const newComment = Comment.create(comment).then(result => {
         console.log(result);
@@ -171,6 +182,7 @@ async function comments_add_comment(req, res, next){
 }
 
 async function comments_get_single(req, res, next){
+    const Comment = getCommentModel();
     const id = req.params.commentId;
     try {
         const comment = await Comment.findByPk(id, {
@@ -213,28 +225,29 @@ async function comments_get_single(req, res, next){
 }
 
 async function comments_modify_comment(req, res, next){
+    const Comment = getCommentModel();
     const id = req.params.commentId;
     const updatedComment = {
         commentText: req.body.commentText,
-        // userId: req.body.userId,
+        //userId: req.body.userId,
         // reviewId: req.body.reviewId,
     };
     
-    // const schema = {
-    //     commentText: {type:"string", optional: true, max: '1000'},
-    //     // userId: {type:"number", optional: true},
-    //     // reviewId: {type:"number", optional: true},
-    // }
+    const schema = {
+        commentText: {type:"string", optional: true, max: '1000'},
+        //userId: {type:"number", optional: true},
+        // reviewId: {type:"number", optional: true},
+    }
         
-    // const v = new validator();
-    // const validationResponse = v.validate(updatedComment, schema);
+    const v = new validator();
+    const validationResponse = v.validate(updatedComment, schema);
         
-    //     if(validationResponse !== true){
-    //         return res.status(400).json({
-    //             message: "Validation failed",
-    //             errors: validationResponse
-    //         });
-    //     }
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
 
     const updComment = Comment.update(updatedComment, {where: { commentId: id }})
     .then(result => {
@@ -256,6 +269,7 @@ async function comments_modify_comment(req, res, next){
 }
 
 async function comments_delete_comment(req, res, next){
+    const Comment = getCommentModel();
     const id = req.params.commentId;
     const destroyComment = Comment.destroy({where:{commentId: id}})
     .then(result => {

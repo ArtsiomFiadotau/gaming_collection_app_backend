@@ -3,11 +3,6 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
   class Game extends Model {
     static associate(models) {
-      Game.belongsToMany(models.Platform, {
-        through: 'GamePlatforms',
-        foreignKey: 'gameId',
-        otherKey: 'platformId',
-      });
       Game.belongsToMany(models.GameList, {
         through: 'ListItems',
         foreignKey: 'gameId',

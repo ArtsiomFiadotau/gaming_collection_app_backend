@@ -10,6 +10,6 @@ router.post('/login', users_login)
 
 router.patch('/:userId', users_modify_user);
 
-router.delete('/:userId', users_delete);
+router.delete('/:userId', checkAuth, users_delete);
 
 export default router;

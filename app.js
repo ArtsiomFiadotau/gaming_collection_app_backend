@@ -3,11 +3,9 @@ import cors from 'cors';
 import collectionItemsRoutes from './api/routes/collectionitems.js';
 import commentsRoutes from './api/routes/comments.js';
 import gameListsRoutes from './api/routes/gamelists.js';
-import gamePlatformsRoutes from './api/routes/gameplatforms.js';
 import gamesRoutes from './api/routes/games.js';
 import listItemsRoutes from './api/routes/listitems.js';
 import reviewsRoutes from './api/routes/reviews.js';
-import platformsRoutes from './api/routes/platforms.js';
 import usersRoutes from './api/routes/users.js';
 
 const app = express();
@@ -27,11 +25,9 @@ app.use(express.json());
 app.use('/collectionitems', collectionItemsRoutes);
 app.use('/comments', commentsRoutes);
 app.use('/gamelists', gameListsRoutes);
-app.use('/gameplatforms', gamePlatformsRoutes);
 app.use('/games', gamesRoutes);
 app.use('/listitems', listItemsRoutes);
 app.use('/reviews', reviewsRoutes);
-app.use('/platforms', platformsRoutes);
 app.use('/users', usersRoutes);
 
 app.use((req, res, next) => {

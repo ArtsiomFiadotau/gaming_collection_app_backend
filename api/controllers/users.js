@@ -141,20 +141,20 @@ async function users_modify_user(req, res, next) {
     }
   }
 
-  // const schema = {
-  //   userName: { type: 'string', optional: true, max: 30 },
-  //   email: { type: 'string', optional: true, empty: false },
-  //   password: { type: 'string', optional: true, min: 6 },
-  //   avatarUrl: { type: 'string', optional: true, max: 255 },
-  //   gamesNumber: { type: 'number', optional: true, integer: true, min: 0 },
-  //   gamesCompleted: { type: 'number', optional: true, integer: true, min: 0 },
-  //   ratingAverage: { type: 'number', optional: true, min: 0 }
-  // };
+  const schema = {
+    userName: { type: 'string', optional: true, max: 30 },
+    email: { type: 'string', optional: true, empty: false },
+    password: { type: 'string', optional: true, min: 6 },
+    avatarUrl: { type: 'string', optional: true, max: 255 },
+    gamesNumber: { type: 'number', optional: true, integer: true, min: 0 },
+    gamesCompleted: { type: 'number', optional: true, integer: true, min: 0 },
+    ratingAverage: { type: 'number', optional: true, min: 0 }
+  };
 
-  // const validationResponse = v.validate(updatedUser, schema);
-  // if (validationResponse !== true) {
-  //   return res.status(400).json({ message: 'Validation failed', errors: validationResponse });
-  // }
+  const validationResponse = v.validate(updatedUser, schema);
+  if (validationResponse !== true) {
+    return res.status(400).json({ message: 'Validation failed', errors: validationResponse });
+  }
 
   try {
     const User = getUserModel();

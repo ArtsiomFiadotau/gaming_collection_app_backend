@@ -1,35 +1,30 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
-const { CollectionItem, GamePlatform, Game, Platform, User, sequelize } = getDB();
+const { CollectionItem, Game, User, sequelize } = getDB();
 
-//  import { sequelize, CollectionItem, GamePlatform, Game, Platform, User } from '../../models';
+function getCollectionItemModel() {
+    const db = getDB();
+    if (!db || !db.CollectionItem) {
+      throw new Error('Database not initialized. CollectionItem model not available.');
+    }
+    return db.CollectionItem;
+  }
 
 async function collectionitems_get_collectionitem(req, res, next){
-    const userId = req.params.userId;
+  const CollectionItem = getCollectionItemModel();  
+  const userId = req.params.userId;
     const gameId = req.params.gameId;
-    const platformId = req.params.platformId;
     
     try {
         const collectionItem = await CollectionItem.findOne({
             where: {
                 userId,
-                gameId,
-                platformId
+                gameId
             },
             include: [
                 {
-                    model: GamePlatform,
-                    attributes: ['gameId', 'platformId'],
-                    include: [
-                        {
-                          model: Game,
-                          attributes: ['title']
-                        },
-                        {
-                            model: Platform,
-                            attributes: ['platformName']
-                          }
-                      ]
+                  model: Game,
+                  attributes: ['title']
                 }
             ]
         });
@@ -39,8 +34,7 @@ async function collectionitems_get_collectionitem(req, res, next){
         }
 
         const response = {
-            title: collectionItem.GamePlatform ? collectionItem.GamePlatform.Game.title : null,
-            platformName: collectionItem.GamePlatform ? collectionItem.GamePlatform.Platform.platformName : null,
+            title: collectionItem.Game ? collectionItem.Game.title : null,
             rating: collectionItem.rating ? collectionItem.rating : "not specified",
             status: collectionItem.status ? collectionItem.status : "not specified",
             isOwned: collectionItem.isOwned ? collectionItem.isOwned : false,
@@ -54,7 +48,8 @@ async function collectionitems_get_collectionitem(req, res, next){
 }
 
 async function collectionitems_get_usercollection(req, res, next) {
-    const userId = req.params.userId;
+  const CollectionItem = getCollectionItemModel();  
+  const userId = req.params.userId;
   
     try {
       // Получаем все CollectionItems по userId, с включением связей
@@ -64,18 +59,8 @@ async function collectionitems_get_usercollection(req, res, next) {
         },
         include: [
             {
-                model: GamePlatform,
-                attributes: ['gameId', 'platformId'],
-                include: [
-                    {
-                      model: Game,
-                      attributes: ['title']
-                    },
-                    {
-                        model: Platform,
-                        attributes: ['platformName']
-                      }
-                  ]
+              model: Game,
+              attributes: ['title']
             },
                 {
                   model: User,
@@ -95,7 +80,7 @@ async function collectionitems_get_usercollection(req, res, next) {
       // Формируем список игр с их названиями
       const games = collectionItems.map(item => ({
         gameId: item.gameId,
-        title: item.GamePlatform.Game.title
+        title: item.Game.title
       }));
   
       const response = {
@@ -111,10 +96,10 @@ async function collectionitems_get_usercollection(req, res, next) {
   }
 
 async function collectionitems_add_collectionitem(req, res, next){
+  const CollectionItem = getCollectionItemModel();
   const collectionItem = {
       userId: req.body.userId,
       gameId: req.body.gameId,
-      platformId: req.body.platformId,
       rating: req.body.rating,
       status: req.body.status,
       isOwned: req.body.isOwned,
@@ -122,26 +107,25 @@ async function collectionitems_add_collectionitem(req, res, next){
       dateCompleted: req.body.dateCompleted,
   };
 
-  // const schema = {
-  //     userId: {type:"number", optional: false},
-  //     gameId: {type:"number", optional: false},
-  //     platformId: {type:"string", optional: false},
-  //     rating: {type:"number", optional: true},
-  //     status: {type:"string", optional: false},
-  //     isOwned: {type:"boolean", optional: false},
-  //     dateStarted: {type:"date", optional: true},
-  //     dateCompleted: {type:"date", optional: true},
-  // }
+  const schema = {
+      userId: {type:"number", optional: false},
+      gameId: {type:"number", optional: false},
+      rating: {type:"number", optional: true},
+      status: {type:"string", optional: false},
+      isOwned: {type:"boolean", optional: false},
+      dateStarted: {type:"date", optional: true},
+      dateCompleted: {type:"date", optional: true},
+  }
       
-  // const v = new validator();
-  // const validationResponse = v.validate(collectionItem, schema);
+  const v = new validator();
+  const validationResponse = v.validate(collectionItem, schema);
       
-  //     if(validationResponse !== true){
-  //         return res.status(400).json({
-  //             message: "Validation failed",
-  //             errors: validationResponse
-  //         });
-  //     }
+      if(validationResponse !== true){
+          return res.status(400).json({
+              message: "Validation failed",
+              errors: validationResponse
+          });
+      }
 
   const newCollectionItem = CollectionItem.create(collectionItem).then(result => {
       res.status(201).json({
@@ -149,7 +133,6 @@ async function collectionitems_add_collectionitem(req, res, next){
           createdCollectionItem: {
             userId: result.userId,
             gameId: result.gameId,
-            platformId: result.platformId,
             rating: result.rating,
             status: result.status,
             isOwned: result.isOwned,
@@ -157,7 +140,7 @@ async function collectionitems_add_collectionitem(req, res, next){
             dateCompleted: result.dateCompleted,
               request: {
                   type: 'POST',
-                  url: 'http://localhost:3000/collectionItems/' + result.userId + '/' + result.gameId + '/' + result.platformId
+                  url: 'http://localhost:3000/collectionItems/' + result.userId + '/' + result.gameId 
               }
           }
   });
@@ -171,10 +154,10 @@ async function collectionitems_add_collectionitem(req, res, next){
 }
 
 async function collectionitems_modify_collectionitem(req, res, next) {
+  const CollectionItem = getCollectionItemModel();
   const updatedCollectionItem = {
     userId: req.body.userId,
     gameId: req.body.gameId,
-    platformId: req.body.platformId,
     rating: req.body.rating,
     status: req.body.status,
     isOwned: req.body.isOwned,
@@ -182,39 +165,37 @@ async function collectionitems_modify_collectionitem(req, res, next) {
     dateCompleted: req.body.dateCompleted,
 };
 
-// const schema = {
-//     userId: {type:"number", optional: true},
-//     gameId: {type:"number", optional: true},
-//     platformId: {type:"string", optional: true},
-//     rating: {type:"number", optional: true},
-//     status: {type:"string", optional: true},
-//     isOwned: {type:"boolean", optional: true},
-//     dateStarted: {type:"date", optional: true},
-//     dateCompleted: {type:"date", optional: true},
-// }
+const schema = {
+    userId: {type:"number", optional: true},
+    gameId: {type:"number", optional: true},
+    rating: {type:"number", optional: true},
+    status: {type:"string", optional: true},
+    isOwned: {type:"boolean", optional: true},
+    dateStarted: {type:"date", optional: true},
+    dateCompleted: {type:"date", optional: true},
+}
       
-//   const v = new validator();
-//   const validationResponse = v.validate(updatedCollectionItem, schema);
+  const v = new validator();
+  const validationResponse = v.validate(updatedCollectionItem, schema);
       
-//       if(validationResponse !== true){
-//           return res.status(400).json({
-//               message: "Validation failed",
-//               errors: validationResponse
-//           });
-//       }
+      if(validationResponse !== true){
+          return res.status(400).json({
+              message: "Validation failed",
+              errors: validationResponse
+          });
+      }
 
   const updCollectionItem = await CollectionItem.update(updatedCollectionItem, 
     {where: {
       userId: updatedCollectionItem.userId,
       gameId: updatedCollectionItem.gameId,
-      platformId: updatedCollectionItem.platformId
     }})
   .then(result => {
       res.status(200).json({
           message: 'CollectionItem data updated!',
           request: {
               type: 'PATCH',
-              url: 'http://localhost:3000/collectionItems/'  + result.userId + '/' + result.gameId + '/' + result.platformId
+              url: 'http://localhost:3000/collectionItems/'  + result.userId + '/' + result.gameId
           }
       });
 
@@ -229,16 +210,15 @@ async function collectionitems_modify_collectionitem(req, res, next) {
 
 
     async function collectionitems_delete_collectionitem(req, res, next){
+      const CollectionItem = getCollectionItemModel();
       const delCollectionItem = {
         userId: req.body.userId,
         gameId: req.body.gameId,
-        platformId: req.body.platformId,
       }
   
       const schema = {
         userId: {type:"number", optional: false},
-        gameId: {type:"number", optional: false},
-        platformId: {type:"string", optional: false},
+        gameId: {type:"number", optional: false}
     }
         
     const v = new validator();
@@ -253,8 +233,7 @@ async function collectionitems_modify_collectionitem(req, res, next) {
 
       const destroyCollectionItem = CollectionItem.destroy({where:
         {userId: delCollectionItem.userId, 
-        gameId: delCollectionItem.gameId, 
-        platformId: delCollectionItem.platformId}})
+        gameId: delCollectionItem.gameId}})
       .then(result => {
           res.status(200).json({
               message: 'Collection Item deleted!',

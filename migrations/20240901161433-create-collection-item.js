@@ -17,11 +17,12 @@ export async function up(queryInterface, Sequelize) {
       allowNull: false,
       primaryKey: true,
       type: Sequelize.INTEGER,
-    },
-    platformId: {
-      allowNull: false,
-      primaryKey: true,
-      type: Sequelize.INTEGER,
+      references: {
+        model: 'Games',
+        key: 'gameId'
+      },
+      onUpdate: 'CASCADE',
+      onDelete: 'CASCADE',
     },
     rating: {
       allowNull: false,
@@ -53,19 +54,9 @@ export async function up(queryInterface, Sequelize) {
     }
   });
   await queryInterface.addConstraint('CollectionItems', {
-    fields: ['gameId', 'platformId'],
-    type: 'foreign key',
-    references: {
-      table: 'GamePlatforms',
-      fields: ['gameId', 'platformId'], // ссылка на оба поля внешней таблицы 
-    },
-    onUpdate: 'CASCADE',
-    onDelete: 'CASCADE',
-  });
-  await queryInterface.addConstraint('CollectionItems', {
-    fields: ['gameId', 'platformId', 'userId'],
+    fields: ['gameId', 'userId'],
     type: 'unique',
-    name: 'unique_game_platform_user' // уникальное имя для индекса составного первичного ключа
+    name: 'unique_game_user' // уникальное имя для индекса составного первичного ключа
   });
 }
 export async function down(queryInterface, Sequelize) {

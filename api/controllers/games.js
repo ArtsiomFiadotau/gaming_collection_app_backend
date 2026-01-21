@@ -51,25 +51,25 @@ async function games_add_game(req, res, next){
         coverImage: req.body.coverImage,
     };
 
-    // const schema = {
-    //     title: {type:"string", optional: false, max: '50'},
-    //     genre: {type:"string", optional: false, max: '50'},
-    //     developer: {type:"string", optional: false, max: '50'},
-    //     releaseDate: {type:"date", optional: false, convert: true},
-    //     description: {type:"string", optional: true, max: '200'},
-    //     averageRating: {type:"number", optional: true},
-    //     coverImage: {type:"string", optional: true, max: '200'},
-    // }
+    const schema = {
+        title: {type:"string", optional: false, max: '200'},
+        genre: {type:"string", optional: false, max: '200'},
+        developer: {type:"string", optional: false, max: '500'},
+        releaseDate: {type:"date", optional: false, convert: true},
+        description: {type:"string", optional: true, max: '2000'},
+        averageRating: {type:"number", optional: true},
+        coverImage: {type:"string", optional: true, max: '255'},
+    }
         
-    // const v = new validator();
-    // const validationResponse = v.validate(game, schema);
+    const v = new validator();
+    const validationResponse = v.validate(game, schema);
         
-    //     if(validationResponse !== true){
-    //         return res.status(400).json({
-    //             message: "Validation failed",
-    //             errors: validationResponse
-    //         });
-    //     }
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
 
     const newGame = Game.create(game).then(result => {
         console.log(result);
@@ -160,6 +160,27 @@ async function games_modify_game(req, res, next){
 async function games_delete_game(req, res, next){
     const Game = getGameModel();
     const id = req.params.gameId;
+
+    const delGame = {
+        gameId: req.params.gameId
+      }
+  
+      const schema = {
+        gameId: {type:"number", optional: false}
+    }
+        
+    const v = new validator();
+    const validationResponse = v.validate(delGame, schema);
+        
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
+
+
+
     const destroyGame = Game.destroy({where:{gameId: id}})
     .then(result => {
         res.status(200).json({

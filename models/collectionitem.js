@@ -3,11 +3,8 @@ import { Model } from 'sequelize';
 export default (sequelize, DataTypes) => {
   class CollectionItem extends Model {
     static associate(models) {
-      CollectionItem.belongsTo(models.GamePlatform, {
+      CollectionItem.belongsTo(models.Game, {
         foreignKey: 'gameId'
-      });
-      CollectionItem.belongsTo(models.GamePlatform, {
-        foreignKey: 'platformId'
       });
       CollectionItem.belongsTo(models.User, {
         foreignKey: 'userId'

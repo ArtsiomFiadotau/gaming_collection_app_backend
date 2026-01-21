@@ -1,10 +1,18 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
 const { ListItem, Game, GameList, User, sequelize } = getDB();
-//import { sequelize, ListItem, Game, GameList, User } from '../../models';
+
+function getListItemModel() {
+  const db = getDB();
+  if (!db || !db.ListItem) {
+    throw new Error('Database not initialized. ListItem model not available.');
+  }
+  return db.Game;
+}
 
 async function listitems_get_singlelist(req, res, next) {
-    const listId = req.params.listId;
+  const ListItem = getListItemModel();  
+  const listId = req.params.listId;
   
     try {
       // Получаем все ListItems по listId, с включением связей
@@ -57,25 +65,26 @@ async function listitems_get_singlelist(req, res, next) {
   }
 
 async function listitems_add_listitem(req, res, next) {
-    const listItem = {
+  const ListItem = getListItemModel();   
+  const listItem = {
         gameId: req.body.gameId,
         listId: req.body.listId,
         };
 
-        // const schema = {
-        //     gameId: {type:"number", optional: false},
-        //     listId: {type:"number", optional: false},
-        // }
+        const schema = {
+            gameId: {type:"number", optional: false},
+            listId: {type:"number", optional: false},
+        }
             
-        // const v = new validator();
-        // const validationResponse = v.validate(listItem, schema);
+        const v = new validator();
+        const validationResponse = v.validate(listItem, schema);
             
-        //     if(validationResponse !== true){
-        //         return res.status(400).json({
-        //             message: "Validation failed",
-        //             errors: validationResponse
-        //         });
-        //     }
+            if(validationResponse !== true){
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validationResponse
+                });
+            }
 
         if (listItem.gameId && listItem.listId) {
     const newListItem = await ListItem.create(listItem).then(result => {
@@ -87,7 +96,7 @@ async function listitems_add_listitem(req, res, next) {
                 listId: result.listId,
                 request: {
                     type: 'POST',
-                    url: 'http://localhost:3000/gameplatforms/' + result.gameId + '/' + result.listId
+                    url: 'http://localhost:3000/gamelists/' + result.gameId + '/' + result.listId
                 }
             }
     });
@@ -102,23 +111,24 @@ async function listitems_add_listitem(req, res, next) {
 }
 
     async function listitems_delete_listitem(req, res, next){
+      const ListItem = getListItemModel(); 
       const delListItem = {
         listId: req.body.listId,
         gameId: req.body.gameId}
   
-      //   const schema = {
-      //     listId: {type:"number", optional: false},
-      //     gameId: {type:"number", optional: false}}
+        const schema = {
+          listId: {type:"number", optional: false},
+          gameId: {type:"number", optional: false}}
           
-      // const v = new validator();
-      // const validationResponse = v.validate(delListItem, schema);
+      const v = new validator();
+      const validationResponse = v.validate(delListItem, schema);
           
-      //     if(validationResponse !== true){
-      //         return res.status(400).json({
-      //             message: "Validation failed",
-      //             errors: validationResponse
-      //         });
-      //     }
+          if(validationResponse !== true){
+              return res.status(400).json({
+                  message: "Validation failed",
+                  errors: validationResponse
+              });
+          }
 
       const destroyListItem = ListItem.destroy({where:{listId: delListItem.listId, gameId: delListItem.gameId}})
       .then(result => {

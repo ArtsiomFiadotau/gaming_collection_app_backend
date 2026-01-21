@@ -1,9 +1,17 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
 const { GameList, User, sequelize } = getDB();
-//import { sequelize, GameList, User as _User } from '../../models';
+
+function getGameListModel() {
+    const db = getDB();
+    if (!db || !db.GameList) {
+      throw new Error('Database not initialized. GameList model not available.');
+    }
+    return db.GameList;
+  }
 
 async function gamelists_get_all(req, res, next){
+    const GameList = getGameListModel();
     const allGameLists = GameList.findAll({
             include: [
             {
@@ -35,6 +43,7 @@ async function gamelists_get_all(req, res, next){
 }
 
 async function gamelists_get_user(req, res, next){
+    const GameList = getGameListModel();
     const userId = req.params.userId;
     const User = await GameList.findAll(
         {
@@ -65,25 +74,26 @@ async function gamelists_get_user(req, res, next){
 }
 
 async function gamelists_add_gamelist(req, res, next){
+    const GameList = getGameListModel();
     const gameList = {
         listTitle: req.body.listTitle,
         userId: req.body.userId,
     };
 
-    // const schema = {
-    //     listTitle: {type:"string", optional: false, max: '200'},
-    //     userId: {type:"number", optional: false},
-    // }
+    const schema = {
+        listTitle: {type:"string", optional: false, max: '200'},
+        userId: {type:"number", optional: false},
+    }
         
-    // const v = new validator();
-    // const validationResponse = v.validate(gameList, schema);
+    const v = new validator();
+    const validationResponse = v.validate(gameList, schema);
         
-    //     if(validationResponse !== true){
-    //         return res.status(400).json({
-    //             message: "Validation failed",
-    //             errors: validationResponse
-    //         });
-    //     }
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
 
     const newGameList = GameList.create(gameList).then(result => {
         console.log(result);
@@ -108,6 +118,7 @@ async function gamelists_add_gamelist(req, res, next){
 }
 
 async function gamelists_get_single(req, res, next){
+    const GameList = getGameListModel();
     const id = req.params.listId;
     try {
         const gamelist = await GameList.findByPk(id, {
@@ -137,26 +148,27 @@ async function gamelists_get_single(req, res, next){
 }
 
 async function gamelists_modify_gamelist(req, res, next){
+    const GameList = getGameListModel();
     const id = req.params.listId;
     const updatedGameList = {
         listTitle: req.body.listTitle,
         userId: req.body.userId,
     };
     
-    // const schema = {
-    //     listTitle: {type:"string", optional: true, max: '200'},
-    //     userId: {type:"number", optional: true},
-    // }
+    const schema = {
+        listTitle: {type:"string", optional: true, max: '200'},
+        userId: {type:"number", optional: true},
+    }
         
-    // const v = new validator();
-    // const validationResponse = v.validate(updatedGameList, schema);
+    const v = new validator();
+    const validationResponse = v.validate(updatedGameList, schema);
         
-    //     if(validationResponse !== true){
-    //         return res.status(400).json({
-    //             message: "Validation failed",
-    //             errors: validationResponse
-    //         });
-    //     }
+        if(validationResponse !== true){
+            return res.status(400).json({
+                message: "Validation failed",
+                errors: validationResponse
+            });
+        }
 
     const updGameList = GameList.update(updatedGameList, {where: { listId: id }})
     .then(result => {
@@ -178,6 +190,7 @@ async function gamelists_modify_gamelist(req, res, next){
 }
 
 async function gamelists_delete_gamelist(req, res, next){
+    const GameList = getGameListModel();
     const id = req.params.listId;
     const destroyGameList = GameList.destroy({where:{listId: id}})
     .then(result => {

@@ -24,7 +24,7 @@ async function collectionitems_get_collectionitem(req, res, next){
             include: [
                 {
                   model: Game,
-                  attributes: ['title']
+                  attributes: ['title', 'coverImage']
                 }
             ]
         });
@@ -35,6 +35,7 @@ async function collectionitems_get_collectionitem(req, res, next){
 
         const response = {
             title: collectionItem.Game ? collectionItem.Game.title : null,
+            coverImage: collectionItem.Game ? collectionItem.Game.coverImage : null,
             rating: collectionItem.rating ? collectionItem.rating : "not specified",
             status: collectionItem.status ? collectionItem.status : "not specified",
             isOwned: collectionItem.isOwned ? collectionItem.isOwned : false,

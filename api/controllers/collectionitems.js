@@ -1,6 +1,6 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
-const { CollectionItem, Game, User, sequelize } = db;
+const { CollectionItem, Game, User, sequelize } = getDB();
 
 function getCollectionItemModel() {
     const db = getDB();

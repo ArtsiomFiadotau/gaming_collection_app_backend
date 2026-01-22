@@ -108,13 +108,13 @@ async function collectionitems_add_collectionitem(req, res, next){
   };
 
   const schema = {
-      userId: {type:"number", optional: false},
-      gameId: {type:"number", optional: false},
-      rating: {type:"number", optional: true},
-      status: {type:"string", optional: false},
-      isOwned: {type:"boolean", optional: false},
-      dateStarted: {type:"date", optional: true},
-      dateCompleted: {type:"date", optional: true},
+    userId: {type:"number", optional: true},
+    gameId: {type:"number", optional: true},
+    rating: {type:"number", optional: true},
+    status: {type:"string", optional: true},
+    isOwned: {type:"boolean", optional: true},
+    dateStarted: {type:"date", optional: true},
+    dateCompleted: {type:"date", optional: true},
   }
       
   const v = new validator();

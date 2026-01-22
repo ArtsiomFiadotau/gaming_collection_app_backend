@@ -38,11 +38,11 @@ export async function up(queryInterface, Sequelize) {
     },
     dateStarted: {
       allowNull: true,
-      type: Sequelize.DATE
+      type: Sequelize.STRING
     },
     dateCompleted: {
       allowNull: true,
-      type: Sequelize.DATE
+      type: Sequelize.STRING
     },
     createdAt: {
       allowNull: false,

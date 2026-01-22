@@ -109,8 +109,8 @@ async function collectionitems_add_collectionitem(req, res, next){
     rating: {type:"number", optional: true},
     status: {type:"string", optional: true},
     isOwned: {type:"boolean", optional: true},
-    dateStarted: {type:"date", optional: true},
-    dateCompleted: {type:"date", optional: true},
+    dateStarted: {type:"string", optional: true},
+    dateCompleted: {type:"string", optional: true},
   }
       
   const v = new validator();
@@ -167,8 +167,8 @@ const schema = {
     rating: {type:"number", optional: true},
     status: {type:"string", optional: true},
     isOwned: {type:"boolean", optional: true},
-    dateStarted: {type:"date", optional: true},
-    dateCompleted: {type:"date", optional: true},
+    dateStarted: {type:"string", optional: true},
+    dateCompleted: {type:"string", optional: true},
 }
       
   const v = new validator();

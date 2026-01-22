@@ -1,6 +1,6 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
-const { CollectionItem, Game, User, sequelize } = getDB();
+const { CollectionItem, Game, User, sequelize } = db;
 
 function getCollectionItemModel() {
     const db = getDB();
@@ -16,17 +16,13 @@ async function collectionitems_get_collectionitem(req, res, next){
     const gameId = req.params.gameId;
     
     try {
+      const includeGame = Game ? { model: Game } : 'Game';
         const collectionItem = await CollectionItem.findOne({
             where: {
                 userId,
                 gameId
             },
-            include: [
-                {
-                  model: Game,
-                  attributes: ['title', 'coverImage']
-                }
-            ]
+            include: [ includeGame ]
         });
 
         if (!collectionItem) {
@@ -34,11 +30,15 @@ async function collectionitems_get_collectionitem(req, res, next){
         }
 
         const response = {
+            userId: collectionItem.userId,  
+            gameId: collectionItem.gameId,  
             title: collectionItem.Game ? collectionItem.Game.title : null,
             coverImage: collectionItem.Game ? collectionItem.Game.coverImage : null,
             rating: collectionItem.rating ? collectionItem.rating : "not specified",
             status: collectionItem.status ? collectionItem.status : "not specified",
             isOwned: collectionItem.isOwned ? collectionItem.isOwned : false,
+            dateStarted: collectionItem.dateStarted || null,  
+            dateCompleted: collectionItem.dateCompleted || null,  
         };
 
         res.status(200).json(response);
@@ -54,20 +54,13 @@ async function collectionitems_get_usercollection(req, res, next) {
   
     try {
       // Получаем все CollectionItems по userId, с включением связей
+      const includeGame = Game ? { model: Game } : 'Game';  
+      const includeUser = User ? { model: User } : 'User';  
       const collectionItems = await CollectionItem.findAll({
         where: {
             userId
         },
-        include: [
-            {
-              model: Game,
-              attributes: ['title','coverImage']
-            },
-                {
-                  model: User,
-                  attributes: ['userName']
-                }
-        ]
+        include: [ includeGame, includeUser ], 
     });
   
         if (!collectionItems || collectionItems.length === 0) {
@@ -76,13 +69,14 @@ async function collectionitems_get_usercollection(req, res, next) {
   
       // Получаем имя пользователя из первой записи
       const firstItem = collectionItems[0];
-      const userName = firstItem.User.userName;
+      const userName = firstItem.User ? firstItem.User.userName : null;  
   
       // Формируем список игр с их названиями
       const games = collectionItems.map(item => ({
+        userId: item.userId, 
         gameId: item.gameId,
-        title: item.Game.title,
-        coverImage: item.coverImage
+        title: item.Game ? item.Game.title : null,  
+        coverImage: item.Game ? item.Game.coverImage : null 
       }));
   
       const response = {

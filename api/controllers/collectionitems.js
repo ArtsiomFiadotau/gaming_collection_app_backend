@@ -60,7 +60,7 @@ async function collectionitems_get_usercollection(req, res, next) {
         include: [
             {
               model: Game,
-              attributes: ['title']
+              attributes: ['title','coverImage']
             },
                 {
                   model: User,
@@ -80,7 +80,8 @@ async function collectionitems_get_usercollection(req, res, next) {
       // Формируем список игр с их названиями
       const games = collectionItems.map(item => ({
         gameId: item.gameId,
-        title: item.Game.title
+        title: item.Game.title,
+        coverImage: item.coverImage
       }));
   
       const response = {

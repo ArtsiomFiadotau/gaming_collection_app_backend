@@ -29,12 +29,14 @@ async function users_get_single(req, res, next){
       .then(doc => {
           if (doc) {
           res.status(200).json({
-              user: doc,
-              request: {
-                  type: 'GET',
-                  url: 'http://localhost:3000/users'
+            userName: result.userName,
+            email: result.email,
+            avatarUrl: result.avatarUrl,
+            gamesNumber: result.gamesNumber,
+            gamesCompleted: result.gamesCompleted,
+            ratingAverage: result.ratingAverage,
               }
-          });
+        );
       } else {
           res.status(404).json({message: 'No valid data for id'});
       }

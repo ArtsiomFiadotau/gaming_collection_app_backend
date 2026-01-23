@@ -194,7 +194,7 @@ async function reviews_get_single(req, res, next) {
     console.log("From database", singleReview);
     if (singleReview) {
       res.status(200).json({
-        reviewId: doc.reviewId,
+        reviewId: singleReview.reviewId,
         userId: singleReview.userId,
         gameId: singleReview.gameId,
         userName: singleReview.User ? singleReview.User.userName : null,

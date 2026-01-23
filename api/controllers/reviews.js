@@ -51,15 +51,13 @@ async function reviews_get_all(req, res, next){
 async function reviews_get_user(req, res, next){
     const Review = getReviewModel();
     const userId = req.params.userId;
+    const includeGame = Game ? { model: Game } : 'User';
     const User = await Review.findAll(
         {
             where: {
                 userId: userId
             },
-            include: [{
-                model: Game,
-                attributes: ['title']
-            }],
+            include: [ includeGame ],
         })
     .then(docs => {
        const response = {
@@ -87,15 +85,13 @@ async function reviews_get_user(req, res, next){
 async function reviews_get_game(req, res, next){
     const Review = getReviewModel();
     const gameId = req.params.gameId;
+    const includeUser = User ? { model: User } : 'User';  
     const Game = await Review.findAll(
         {
             where: {
                 gameId: gameId
             },
-            include: [{
-                                 model: User,
-                                 attributes: ['userName']
-                             }]
+            include: [ includeUser ]
         })
     .then(docs => {
        const response = {
@@ -182,12 +178,11 @@ async function reviews_get_single(req, res, next){
             console.log("From database", doc);
             if (doc) {
             res.status(200).json({
-                review: doc,
-                request: {
-                    type: 'GET',
-                    url: 'http://localhost:3000/reviews'
+            userId: doc.userId,
+            reviewTitle: doc.reviewTitle,
+            reviewText: doc.reviewText,
                 }
-            });
+            );
         } else {
             res.status(404).json({message: 'No valid data for id'});
         }

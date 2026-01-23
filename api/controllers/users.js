@@ -18,6 +18,33 @@ function getUserModel() {
   return db.User;
 }
 
+async function users_get_single(req, res, next){
+  const User = getUserModel();
+  const id = req.params.userId;
+  const singleUser = User.findByPk(id, {
+      attributes: {
+        exclude: ['updatedAt', 'createdAt'],
+      },
+    })
+      .then(doc => {
+          if (doc) {
+          res.status(200).json({
+              user: doc,
+              request: {
+                  type: 'GET',
+                  url: 'http://localhost:3000/users'
+              }
+          });
+      } else {
+          res.status(404).json({message: 'No valid data for id'});
+      }
+      })
+      .catch(err => {
+          console.log(err);
+          res.status(500).json({error: err});
+  });
+}
+
 async function users_signup(req, res, next) {
   try {
     const User = getUserModel();
@@ -182,5 +209,6 @@ export {
   users_signup,
   users_login,
   users_delete,
-  users_modify_user
+  users_modify_user,
+  users_get_single
 };

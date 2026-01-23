@@ -51,13 +51,14 @@ async function reviews_get_all(req, res, next){
 async function reviews_get_user(req, res, next){
     const Review = getReviewModel();
     const userId = req.params.userId;
-    const includeGame = Game ? { model: Game } : 'User';
+    const includeGame = Game ? { model: Game } : 'Game';
+    const includeUser = User ? { model: User } : 'User';
     const User = await Review.findAll(
         {
             where: {
                 userId: userId
             },
-            include: [ includeGame ],
+            include: [ includeGame, includeUser ],
         })
     .then(docs => {
        const response = {
@@ -66,7 +67,10 @@ async function reviews_get_user(req, res, next){
             return {
                 reviewTitle: doc.reviewTitle,
                 reviewText: doc.reviewText,
+                userName: doc.User ? doc.User.userName : null,
                 title: doc.Game ? doc.Game.title : null,
+                gameId: doc.gameId,
+                userId: doc.userId,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
             }
@@ -85,13 +89,14 @@ async function reviews_get_user(req, res, next){
 async function reviews_get_game(req, res, next){
     const Review = getReviewModel();
     const gameId = req.params.gameId;
-    const includeUser = User ? { model: User } : 'User';  
+    const includeGame = Game ? { model: Game } : 'Game';
+    const includeUser = User ? { model: User } : 'User'; 
     const Game = await Review.findAll(
         {
             where: {
                 gameId: gameId
             },
-            include: [ includeUser ]
+            include: [ includeUser, includeGame ]
         })
     .then(docs => {
        const response = {
@@ -101,6 +106,9 @@ async function reviews_get_game(req, res, next){
                 reviewTitle: doc.reviewTitle,
                 reviewText: doc.reviewText,
                 userName: doc.User ? doc.User.userName : null,
+                title: doc.Game ? doc.Game.title : null,
+                gameId: doc.gameId,
+                userId: doc.userId,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
             }
@@ -169,16 +177,22 @@ async function reviews_add_review(req, res, next){
 async function reviews_get_single(req, res, next){
     const Review = getReviewModel();
     const id = req.params.reviewId;
+    const includeGame = Game ? { model: Game } : 'Game';
+    const includeUser = User ? { model: User } : 'User'; 
     const singleReview = Review.findByPk(id, {
         attributes: {
           exclude: ['updatedAt', 'createdAt'],
         },
+        include: [ includeUser, includeGame ]
       })
         .then(doc => {
             console.log("From database", doc);
             if (doc) {
             res.status(200).json({
             userId: doc.userId,
+            gameId: doc.gameId,
+            userName: doc.User ? doc.User.userName : null,
+            title: doc.Game ? doc.Game.title : null,
             reviewTitle: doc.reviewTitle,
             reviewText: doc.reviewText,
                 }

@@ -29,12 +29,12 @@ async function users_get_single(req, res, next){
       .then(doc => {
           if (doc) {
           res.status(200).json({
-            userName: singleUser.userName,
-            email: singleUser.email,
-            avatarUrl: singleUser.avatarUrl,
-            gamesNumber: singleUser.gamesNumber,
-            gamesCompleted: singleUser.gamesCompleted,
-            ratingAverage: singleUser.ratingAverage,
+            userName: doc.userName,
+            email: doc.email,
+            avatarUrl: doc.avatarUrl,
+            gamesNumber: doc.gamesNumber,
+            gamesCompleted: doc.gamesCompleted,
+            ratingAverage: doc.ratingAverage,
               }
         );
       } else {

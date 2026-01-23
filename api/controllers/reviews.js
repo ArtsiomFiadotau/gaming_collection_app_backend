@@ -27,6 +27,7 @@ async function reviews_get_all(req, res, next) {
       count: allReviews.length,
       reviews: allReviews.map(doc => {
         return {
+          reviewId: doc.reviewId,
           reviewTitle: doc.reviewTitle,
           reviewText: doc.reviewText,
           title: doc.Game ? doc.Game.title : null,
@@ -64,6 +65,7 @@ async function reviews_get_user(req, res, next) {
       count: userReviews.length,
       reviews: userReviews.map(doc => {
         return {
+          reviewId: doc.reviewId,
           reviewTitle: doc.reviewTitle,
           reviewText: doc.reviewText,
           userName: doc.User ? doc.User.userName : null,
@@ -103,6 +105,7 @@ async function reviews_get_game(req, res, next) {
       count: gameReviews.length,
       reviews: gameReviews.map(doc => {
         return {
+          reviewId: doc.reviewId,
           reviewTitle: doc.reviewTitle,
           reviewText: doc.reviewText,
           userName: doc.User ? doc.User.userName : null,
@@ -191,6 +194,7 @@ async function reviews_get_single(req, res, next) {
     console.log("From database", singleReview);
     if (singleReview) {
       res.status(200).json({
+        reviewId: doc.reviewId,
         userId: singleReview.userId,
         gameId: singleReview.gameId,
         userName: singleReview.User ? singleReview.User.userName : null,

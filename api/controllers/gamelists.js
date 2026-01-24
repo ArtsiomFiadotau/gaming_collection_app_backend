@@ -282,11 +282,65 @@ async function gamelists_delete_gamelist(req, res, next){
     }
 }
 
+async function gamelists_get_game(req, res, next){
+    try {
+        const GameList = getGameListModel();
+        const User = getUserModel();
+        const Game = getGameModel();
+        const gameId = req.params.gameId;
+        
+        // Находим все списки, которые содержат указанную игру
+        const gameLists = await GameList.findAll({
+            include: [
+                {
+                    model: Game,
+                    where: {
+                        gameId: gameId
+                    },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: ['gameId']
+                },
+                {
+                    model: User,
+                    attributes: ['userName']
+                }
+            ]
+        });
+        
+        if (!gameLists || gameLists.length === 0) {
+            return res.status(404).json({ 
+                message: `No gamelists found containing game with gameId: ${gameId}` 
+            });
+        }
+        
+        const response = {
+            count: gameLists.length,
+            gameId: gameId,
+            gameLists: gameLists.map(list => ({
+                listId: list.listId,
+                listTitle: list.listTitle,
+                userId: list.userId,
+                userName: list.User ? list.User.userName : null
+            }))
+        };
+        
+        res.status(200).json(response);
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({
+            error: err.message
+        });
+    }
+}
+
 export {
     gamelists_get_all,
     gamelists_get_user,
     gamelists_add_gamelist,
     gamelists_get_single,
     gamelists_modify_gamelist,
-    gamelists_delete_gamelist
+    gamelists_delete_gamelist,
+    gamelists_get_game
 }

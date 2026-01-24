@@ -2,11 +2,13 @@ import { Router } from 'express';
 const router = Router();
 import checkAuth from '../middleware/check-auth.js';
 
-import { gamelists_get_all, gamelists_get_user, gamelists_add_gamelist, gamelists_get_single, gamelists_modify_gamelist, gamelists_delete_gamelist } from '../controllers/gamelists.js';
+import { gamelists_get_all, gamelists_get_user, gamelists_add_gamelist, gamelists_get_single, gamelists_modify_gamelist, gamelists_delete_gamelist, gamelists_get_game } from '../controllers/gamelists.js';
 
 router.get('/', gamelists_get_all);
 
 router.get('/user/:userId', gamelists_get_user);
+
+router.get('/game/:gameId', gamelists_get_game);
 
 router.post('/', gamelists_add_gamelist);
 

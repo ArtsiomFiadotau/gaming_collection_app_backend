@@ -160,13 +160,24 @@ async function gamelists_add_gamelist(req, res, next){
 }
 
 async function gamelists_get_single(req, res, next){
-    const GameList = getGameListModel();
-    const id = req.params.listId;
     try {
+        const GameList = getGameListModel();
+        const User = getUserModel();
+        const Game = getGameModel();
+        const id = req.params.listId;
+        
         const gamelist = await GameList.findByPk(id, {
             include: [
-                {   model: User,
+                {   
+                    model: User,
                     attributes: ['userName']
+                },
+                {
+                    model: Game,
+                    through: {
+                        attributes: []
+                    },
+                    attributes: ['gameId', 'title', 'coverImage']
                 }
             ]
         });
@@ -175,11 +186,18 @@ async function gamelists_get_single(req, res, next){
             return res.status(404).json({ message: 'Gamelist не найден' });
         }
 
+        const games = gamelist.Games || [];
         const response = {
+            listId: gamelist.listId,
             listTitle: gamelist.listTitle,
             userName: gamelist.User ? gamelist.User.userName : null,
             createdAt: gamelist.createdAt,
             updatedAt: gamelist.updatedAt,
+            games: games.map(game => ({
+                gameId: game.gameId,
+                title: game.title,
+                coverImage: game.coverImage
+            }))
         };
 
         res.status(200).json(response);

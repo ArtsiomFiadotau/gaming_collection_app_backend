@@ -17,27 +17,70 @@ function getUserModel() {
     return db.User;
 }
 
+function getListItemModel() {
+    const db = getDB();
+    if (!db || !db.ListItem) {
+      throw new Error('Database not initialized. ListItem model not available.');
+    }
+    return db.ListItem;
+}
+
+function getGameModel() {
+    const db = getDB();
+    if (!db || !db.Game) {
+      throw new Error('Database not initialized. Game model not available.');
+    }
+    return db.Game;
+}
+
 async function gamelists_get_all(req, res, next){
     try {
         const GameList = getGameListModel();
         const User = getUserModel();
+        const Game = getGameModel();
+        const ListItem = getListItemModel();
+        
         const docs = await GameList.findAll({
             include: [
             {
                 model: User,
                 attributes: ['userName']
+            },
+            {
+                model: Game,
+                through: {
+                    attributes: []
+                },
+                include: [
+                    {
+                        model: ListItem,
+                        required: false,
+                        include: [
+                            {
+                                model: Game,
+                                attributes: ['gameId', 'title', 'coverImage']
+                            }
+                        ]
+                    }
+                ]
             }]
         });
         
         const response = {
          count: docs.length,
          gamelists: docs.map(doc => {
+             const listItems = doc.ListItems || [];
              return {
                 listId: doc.listId,
                 listTitle: doc.listTitle,
                 userName: doc.User ? doc.User.userName : null,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
+                games: listItems.map(item => ({
+                    gameId: item.Game.gameId,
+                    title: item.Game.title,
+                    coverImage: item.Game.coverImage
+                }))
              }
          })
         };

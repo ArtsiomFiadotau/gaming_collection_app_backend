@@ -323,11 +323,11 @@ async function gamelists_get_game(req, res, next){
                 listTitle: list.listTitle,
                 userId: list.userId,
                 userName: list.User ? list.User.userName : null,
-                games: games.map(game => ({
+                games: list.Games ? list.Games.map(game => ({
                     gameId: game.gameId,
                     title: game.title,
                     coverImage: game.coverImage
-                }))
+                })) : []
             }))
         };
         

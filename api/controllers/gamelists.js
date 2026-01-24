@@ -1,6 +1,5 @@
 import validator from 'fastest-validator';
 import { getDB } from '../../models/index.js';
-const { GameList, User, sequelize } = getDB();
 
 function getGameListModel() {
     const db = getDB();
@@ -8,23 +7,33 @@ function getGameListModel() {
       throw new Error('Database not initialized. GameList model not available.');
     }
     return db.GameList;
-  }
+}
+
+function getUserModel() {
+    const db = getDB();
+    if (!db || !db.User) {
+      throw new Error('Database not initialized. User model not available.');
+    }
+    return db.User;
+}
 
 async function gamelists_get_all(req, res, next){
-    const GameList = getGameListModel();
-    const allGameLists = GameList.findAll({
+    try {
+        const GameList = getGameListModel();
+        const User = getUserModel();
+        const docs = await GameList.findAll({
             include: [
             {
                 model: User,
                 attributes: ['userName']
             }]
-        },
-      )
-    .then(docs => {
+        });
+        
         const response = {
          count: docs.length,
          gamelists: docs.map(doc => {
              return {
+                listId: doc.listId,
                 listTitle: doc.listTitle,
                 userName: doc.User ? doc.User.userName : null,
                 createdAt: doc.createdAt,
@@ -33,30 +42,32 @@ async function gamelists_get_all(req, res, next){
          })
         };
          res.status(200).json(response);
-     })
-    .catch(err => {
+     } catch (err) {
         console.log(err);
         res.status(500).json({
-            error: err
+            error: err.message
         })
-    });
+    }
 }
 
 async function gamelists_get_user(req, res, next){
-    const GameList = getGameListModel();
-    const userId = req.params.userId;
-    const User = await GameList.findAll(
-        {
+    try {
+        const GameList = getGameListModel();
+        const User = getUserModel();
+        const userId = req.params.userId;
+        const docs = await GameList.findAll({
             where: {
                 userId: userId
             },
             include: [User],
-        })
-    .then(docs => {
+        });
+        
        const response = {
         count: docs.length,
         gameLists: docs.map(doc => {
             return {
+                listId: doc.listId,
+                userId: doc.userId,
                 listTitle: doc.listTitle,
                 createdAt: doc.createdAt,
                 updatedAt: doc.updatedAt,
@@ -64,42 +75,43 @@ async function gamelists_get_user(req, res, next){
         })
        };
         res.status(200).json(response);
-    })
-    .catch(err => {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
-            error: err
+            error: err.message
         })
-    });
+    }
 }
 
 async function gamelists_add_gamelist(req, res, next){
-    const GameList = getGameListModel();
-    const gameList = {
-        listTitle: req.body.listTitle,
-        userId: req.body.userId,
-    };
+    try {
+        const GameList = getGameListModel();
+        const gameList = {
+            listTitle: req.body.listTitle,
+            userId: req.body.userId,
+        };
 
-    const schema = {
-        listTitle: {type:"string", optional: false, max: '200'},
-        userId: {type:"number", optional: false},
-    }
-        
-    const v = new validator();
-    const validationResponse = v.validate(gameList, schema);
-        
-        if(validationResponse !== true){
-            return res.status(400).json({
-                message: "Validation failed",
-                errors: validationResponse
-            });
+        const schema = {
+            listTitle: {type:"string", optional: false, max: 200},
+            userId: {type:"number", optional: false},
         }
+            
+        const v = new validator();
+        const validationResponse = v.validate(gameList, schema);
+            
+            if(validationResponse !== true){
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validationResponse
+                });
+            }
 
-    const newGameList = GameList.create(gameList).then(result => {
+        const result = await GameList.create(gameList);
         console.log(result);
         res.status(201).json({
-            message: 'New GameList added succesfully!',
+            message: 'New GameList added successfully!',
             createdGameList: {
+                listId: result.listId,
                 listTitle: result.listTitle,
                 userId: result.userId,
                 request: {
@@ -107,14 +119,13 @@ async function gamelists_add_gamelist(req, res, next){
                     url: 'http://localhost:3000/gamelists/' + result.listId
                 }
             }
-    });
-})
-    .catch(err => {
+        });
+    } catch (err) {
         console.log(err)
         res.status(500).json({
-            error: err
+            error: err.message
         });
-    });
+    }
 }
 
 async function gamelists_get_single(req, res, next){
@@ -148,21 +159,27 @@ async function gamelists_get_single(req, res, next){
 }
 
 async function gamelists_modify_gamelist(req, res, next){
-    const GameList = getGameListModel();
-    const id = req.params.listId;
-    const updatedGameList = {
-        listTitle: req.body.listTitle,
-        userId: req.body.userId,
-    };
-    
-    const schema = {
-        listTitle: {type:"string", optional: true, max: '200'},
-        userId: {type:"number", optional: true},
-    }
+    try {
+        const GameList = getGameListModel();
+        const id = req.params.listId;
         
-    const v = new validator();
-    const validationResponse = v.validate(updatedGameList, schema);
+        // Собираем только переданные поля
+        const updatedGameList = {};
+        if (req.body.listTitle !== undefined) {
+            updatedGameList.listTitle = req.body.listTitle;
+        }
+        if (req.body.userId !== undefined) {
+            updatedGameList.userId = req.body.userId;
+        }
         
+        const schema = {
+            listTitle: {type:"string", optional: true, max: 200},
+            userId: {type:"number", optional: true},
+        }
+            
+        const v = new validator();
+        const validationResponse = v.validate(updatedGameList, schema);
+            
         if(validationResponse !== true){
             return res.status(400).json({
                 message: "Validation failed",
@@ -170,8 +187,11 @@ async function gamelists_modify_gamelist(req, res, next){
             });
         }
 
-    const updGameList = GameList.update(updatedGameList, {where: { listId: id }})
-    .then(result => {
+        const [affectedCount] = await GameList.update(updatedGameList, {where: { listId: id }});
+        if (affectedCount === 0) {
+            return res.status(404).json({ message: 'GameList not found or no changes applied' });
+        }
+        
         res.status(200).json({
             message: 'GameList data updated!',
             request: {
@@ -179,36 +199,38 @@ async function gamelists_modify_gamelist(req, res, next){
                 url: 'http://localhost:3000/gamelists/' + id
             }
         });
-
-    })
-    .catch(err => {
+    } catch (err) {
         console.log(err);
-        res.status(500),json({
-            error: err
+        res.status(500).json({
+            error: err.message
         });
-    });
+    }
 }
 
 async function gamelists_delete_gamelist(req, res, next){
-    const GameList = getGameListModel();
-    const id = req.params.listId;
-    const destroyGameList = GameList.destroy({where:{listId: id}})
-    .then(result => {
+    try {
+        const GameList = getGameListModel();
+        const id = req.params.listId;
+        const deletedCount = await GameList.destroy({where:{listId: id}});
+        
+        if (deletedCount === 0) {
+            return res.status(404).json({ message: 'GameList not found' });
+        }
+        
         res.status(200).json({
             message: 'GameList deleted!',
             request: {
                 type: 'POST',
                 url: 'http://localhost:3000/gamelists/',
-                body: { listTitle: 'String(200)', userId: 'number'}
+                body: { listTitle: 'String', userId: 'number'}
             }
         });
-    })
-    .catch(err => {
+    } catch (err) {
         console.log(err);
         res.status(500).json({
-            error: err
+            error: err.message
         });
-    });
+    }
 }
 
 export {

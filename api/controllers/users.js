@@ -83,7 +83,11 @@ async function users_signup(req, res, next) {
     const responseUser = {
       userId: created.userId,
       userName: created.userName,
-      email: created.email
+      email: created.email,
+      isModerator: false,
+      gamesNumber: 0,
+      gamesCompleted: 0,
+      ratingAverage: 0
     };
 
     return res.status(201).json({ message: 'User created', user: responseUser });
@@ -120,7 +124,8 @@ async function users_login(req, res, next) {
     const responseUser = {
       userId: user.userId,
       userName: user.userName,
-      email: user.email
+      email: user.email,
+      isModerator: user.isModerator
     };
 
     return res.status(200).json({

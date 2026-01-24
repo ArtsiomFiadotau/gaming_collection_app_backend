@@ -327,7 +327,7 @@ async function gamelists_get_game(req, res, next){
                     gameId: game.gameId,
                     title: game.title,
                     coverImage: game.coverImage
-                })
+                }))
             }))
         };
         

@@ -300,7 +300,7 @@ async function gamelists_get_game(req, res, next){
                     through: {
                         attributes: []
                     },
-                    attributes: ['gameId']
+                    attributes: ['gameId', 'title', 'coverImage']
                 },
                 {
                     model: User,
@@ -308,7 +308,7 @@ async function gamelists_get_game(req, res, next){
                 }
             ]
         });
-        
+       
         if (!gameLists || gameLists.length === 0) {
             return res.status(404).json({ 
                 message: `No gamelists found containing game with gameId: ${gameId}` 
@@ -322,7 +322,12 @@ async function gamelists_get_game(req, res, next){
                 listId: list.listId,
                 listTitle: list.listTitle,
                 userId: list.userId,
-                userName: list.User ? list.User.userName : null
+                userName: list.User ? list.User.userName : null,
+                games: games.map(game => ({
+                    gameId: game.gameId,
+                    title: game.title,
+                    coverImage: game.coverImage
+                })
             }))
         };
         

@@ -289,14 +289,41 @@ async function gamelists_get_game(req, res, next){
         const Game = getGameModel();
         const gameId = req.params.gameId;
         
-        // Находим все списки, которые содержат указанную игру
-        const gameLists = await GameList.findAll({
+// Сначала находим ID всех списков, которые содержат указанную игру
+        const listsWithGame = await GameList.findAll({
             include: [
                 {
                     model: Game,
                     where: {
                         gameId: gameId
                     },
+                    through: {
+                        attributes: []
+                    },
+                    attributes: ['gameId'],
+                    required: true
+                }
+            ],
+            attributes: ['listId']
+        });
+        
+        if (!listsWithGame || listsWithGame.length === 0) {
+            return res.status(404).json({ 
+                message: `No gamelists found containing game with gameId: ${gameId}` 
+            });
+        }
+        
+        // Извлекаем listId из найденных списков
+        const listIds = listsWithGame.map(list => list.listId);
+        
+        // Теперь получаем полные данные всех этих списков со всеми играми
+        const gameLists = await GameList.findAll({
+            where: {
+                listId: listIds
+            },
+            include: [
+                {
+                    model: Game,
                     through: {
                         attributes: []
                     },
@@ -308,12 +335,6 @@ async function gamelists_get_game(req, res, next){
                 }
             ]
         });
-       
-        if (!gameLists || gameLists.length === 0) {
-            return res.status(404).json({ 
-                message: `No gamelists found containing game with gameId: ${gameId}` 
-            });
-        }
         
         const response = {
             count: gameLists.length,

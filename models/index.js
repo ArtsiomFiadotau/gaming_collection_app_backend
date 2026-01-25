@@ -179,7 +179,50 @@ export async function initializeDatabase() {
     throw err;
   }
 
+  // Создаем модератора по умолчанию, если его нет
+  await createDefaultModerator(db);
+
   return db;
+}
+
+// Функция для создания модератора по умолчанию
+async function createDefaultModerator(db) {
+  try {
+    if (!db || !db.User) {
+      console.log('User model not available, skipping moderator creation');
+      return;
+    }
+
+    const moderatorExists = await db.User.findOne({
+      where: { userId: 1 }
+    });
+
+    if (!moderatorExists) {
+      const { promisify } = await import('util');
+      const { hash } = await import('bcrypt');
+      const hashAsync = promisify(hash);
+      
+      const hashedPassword = await hashAsync('root', 10);
+      
+      const moderator = await db.User.create({
+        userId: 1,
+        email: 'Moderator',
+        password: hashedPassword,
+        userName: 'Moderator',
+        avatarUrl: '',
+        gamesNumber: 0,
+        gamesCompleted: 0,
+        ratingAverage: 0,
+        isModerator: true
+      });
+
+      console.log('Default moderator created successfully:', moderator.userName);
+    } else {
+      console.log('Moderator already exists, skipping creation');
+    }
+  } catch (error) {
+    console.error('Error creating default moderator:', error);
+  }
 }
 
 export function getDB() {

@@ -18,10 +18,22 @@ export default (sequelize, DataTypes) => {
     password: DataTypes.STRING,
     userName: DataTypes.STRING(30),
     avatarUrl: DataTypes.STRING,
-    gamesNumber: DataTypes.INTEGER,
-    gamesCompleted: DataTypes.INTEGER,
-    ratingAverage: DataTypes.TINYINT,
-    isModerator: DataTypes.BOOLEAN
+    gamesNumber: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    gamesCompleted: {
+      type: DataTypes.INTEGER,
+      defaultValue: 0
+    },
+    ratingAverage: {
+      type: DataTypes.TINYINT,
+      defaultValue: 0
+    },
+    isModerator: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    }
   }, {
     sequelize,
     modelName: 'User',

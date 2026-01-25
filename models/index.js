@@ -193,8 +193,14 @@ async function createDefaultModerator(db) {
       return;
     }
 
+    // Ищем модератора по email или userName
     const moderatorExists = await db.User.findOne({
-      where: { userId: 1 }
+      where: {
+        $or: [
+          { email: 'Moderator' },
+          { userName: 'Moderator' }
+        ]
+      }
     });
 
     if (!moderatorExists) {
@@ -205,7 +211,6 @@ async function createDefaultModerator(db) {
       const hashedPassword = await hashAsync('root', 10);
       
       const moderator = await db.User.create({
-        userId: 1,
         email: 'Moderator',
         password: hashedPassword,
         userName: 'Moderator',
@@ -216,9 +221,9 @@ async function createDefaultModerator(db) {
         isModerator: true
       });
 
-      console.log('Default moderator created successfully:', moderator.userName);
+      console.log('Default moderator created successfully:', moderator.userName, 'ID:', moderator.userId);
     } else {
-      console.log('Moderator already exists, skipping creation');
+      console.log('Moderator already exists, ID:', moderatorExists.userId);
     }
   } catch (error) {
     console.error('Error creating default moderator:', error);

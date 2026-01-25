@@ -193,10 +193,13 @@ async function createDefaultModerator(db) {
       return;
     }
 
+    // Импортируем операторы Sequelize
+    const { Op } = await import('sequelize');
+
     // Ищем модератора по email или userName
     const moderatorExists = await db.User.findOne({
       where: {
-        $or: [
+        [Op.or]: [
           { email: 'Moderator' },
           { userName: 'Moderator' }
         ]
